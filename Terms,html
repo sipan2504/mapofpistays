@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanım Koşulları - Pi ile Konaklama Haritası</title>
+    <!-- Inter fontunu yükle -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN'i yükle - Hızlı stil için -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Varsayılan fontu Inter olarak ayarla */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Özel Tailwind renklerini tanımla (Pi temasına uygun) */
+        .bg-pi-blue { background-color: #1a73e8; }
+        .text-pi-yellow { color: #fbbc05; }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+    <!-- Üst Navigasyon Çubuğu (index.html ve privacy_policy.html ile aynı) -->
+    <header class="bg-white shadow-md p-4 rounded-b-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Logo veya Uygulama Adı -->
+            <h1 class="text-2xl font-bold text-gray-800">
+                <span class="text-pi-blue">Pi</span> <span class="text-pi-yellow">Harita</span>
+            </h1>
+            <!-- Navigasyon Menüsü -->
+            <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-600 hover:text-pi-blue transition duration-300">Ana Sayfa</a>
+                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Konaklama</a>
+                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Ürünler</a>
+                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Hizmetler</a>
+                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">İlan Ver</a>
+            </nav>
+            <!-- Kullanıcı İşlemleri -->
+            <div class="flex items-center space-x-4">
+                <button class="bg-pi-blue text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition duration-300">Giriş Yap</button>
+                <button class="md:hidden text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Kullanım Koşulları İçeriği -->
+    <main class="flex-grow container mx-auto p-4 md:p-8 my-8 bg-white rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6 text-center">Kullanım Koşulları</h1>
+        <p class="text-sm text-gray-500 mb-6 text-center">Son Güncelleme: 14 Temmuz 2025</p>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">1. Giriş</h2>
+            <p class="text-gray-700 leading-relaxed">
+                "Pi ile Konaklama Haritası" uygulamasına ("Uygulama" olarak anılacaktır) hoş geldiniz. Bu Kullanım Koşulları ("Koşullar"), Uygulamamızı kullanırken sizin ve bizim aramızdaki yasal anlaşmayı oluşturur. Uygulamamızı kullanarak, bu Koşulları kabul etmiş ve bunlara uymayı taahhüt etmiş olursunuz. Eğer bu Koşulları kabul etmiyorsanız, Uygulamamızı kullanmamalısınız.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">2. Hizmetlerimizin Tanımı</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Uygulamamız, Pi Network kripto para birimi kullanarak konaklama, ürün ve hizmetlerin harita tabanlı olarak keşfedilmesini ve listelenmesini sağlayan bir platformdur. Kullanıcılar, ilan yayınlayabilir, ilanları arayabilir, ilan sahipleriyle iletişim kurabilir ve Pi ile ödeme yapabilir. Uygulama, ilan sahipleri ile alıcılar arasında bir aracı görevi görür ve doğrudan işlem tarafı değildir.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">3. Kullanıcı Hesapları</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                Uygulamamızın belirli özelliklerine erişmek için bir hesap oluşturmanız gerekebilir. Hesap oluştururken doğru, güncel ve eksiksiz bilgi vermeyi kabul edersiniz. Hesabınızın güvenliğini sağlamaktan ve hesabınız altında gerçekleşen tüm faaliyetlerden siz sorumlusunuz. Şifrenizi gizli tutmalı ve hesabınızın yetkisiz kullanımını derhal bize bildirmelisiniz.
+            </p>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>Hesabınızın Pi Network KYC (Müşterini Tanı) doğrulamasına tabi olabileceğini anlarsınız.</li>
+                <li>Her kullanıcının yalnızca bir hesabı olabilir.</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">4. İçerik ve İlanlar</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                Uygulamaya yüklediğiniz tüm içerik ve ilanlardan (metinler, fotoğraflar, videolar vb.) yalnızca siz sorumlusunuz. Yüklediğiniz içeriğin yasalara uygun, doğru, yanıltıcı olmayan ve üçüncü taraf haklarını ihlal etmeyen nitelikte olduğunu beyan ve taahhüt edersiniz. Uygulama, herhangi bir içeriği önceden bildirimde bulunmaksızın kaldırma veya reddetme hakkını saklı tutar.
+            </p>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>Yasa dışı, müstehcen, karalayıcı, tehditkar, taciz edici veya nefret dolu içerik yayınlamak yasaktır.</li>
+                <li>Fikri mülkiyet haklarını (telif hakkı, ticari marka vb.) ihlal eden içerik yayınlamak yasaktır.</li>
+                <li>Yanlış veya yanıltıcı ilanlar oluşturmak yasaktır.</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">5. Yasaklı Kullanımlar</h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+                Uygulamayı aşağıdaki amaçlarla kullanmak kesinlikle yasaktır:
+            </p>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li>Herhangi bir yasa dışı faaliyet için.</li>
+                <li>Dolandırıcılık, kimlik avı veya kötü niyetli faaliyetlerde bulunmak için.</li>
+                <li>Uygulamanın altyapısına zarar vermek veya aşırı yük bindirmek için.</li>
+                <li>Diğer kullanıcıların kişisel bilgilerini toplamak veya kullanmak için.</li>
+                <li>Uygulamanın çalışmasını engelleyecek veya bozacak herhangi bir eylemde bulunmak için.</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">6. Pi Ödemeleri</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Uygulama içindeki tüm ödemeler Pi Network kripto para birimi üzerinden gerçekleşir. Pi Network blockchain'i üzerindeki işlemler geri alınamaz nitelikte olabilir. Uygulama, Pi Network blockchain'inin ve Pi cüzdanının işleyişi veya güvenliği ile ilgili herhangi bir sorun için sorumluluk kabul etmez. Kullanıcılar, Pi cüzdanlarının güvenliğinden ve özel anahtarlarının korunmasından tamamen kendileri sorumludur. Uygulama, Pi'nin değeri veya piyasa oynaklığı konusunda herhangi bir garanti vermez.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">7. Sorumluluk Reddi</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Uygulama "olduğu gibi" ve "mevcut olduğu şekilde" sunulmaktadır. Uygulamanın kesintisiz, hatasız veya güvenli olacağına dair hiçbir garanti vermeyiz. Uygulama aracılığıyla listelenen veya satın alınan ürünlerin, hizmetlerin veya konaklamaların kalitesi, güvenliği veya yasallığı konusunda herhangi bir sorumluluk kabul etmeyiz. Tüm işlemlerin riskleri tamamen kullanıcılara aittir.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">8. Sorumluluğun Sınırlandırılması</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Uygulama veya bağlı kuruluşları, yöneticileri, çalışanları veya acenteleri, Uygulamanın kullanımından veya kullanılamamasından kaynaklanan hiçbir doğrudan, dolaylı, arızi, özel, sonuçsal veya cezai zararlardan (kar kaybı, veri kaybı veya iş kesintisi dahil ancak bunlarla sınırlı olmamak üzere) sorumlu tutulamaz.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">9. Tazminat</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Bu Koşulları ihlal etmenizden veya Uygulamayı kullanmanızdan kaynaklanan her türlü iddia, zarar, yükümlülük, kayıp, maliyet veya borç ve giderlere (avukatlık ücretleri dahil) karşı Uygulamayı ve bağlı kuruluşlarını, yöneticilerini, çalışanlarını ve acentelerini tazmin etmeyi ve zararsız tutmayı kabul edersiniz.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">10. Koşullarda Yapılan Değişiklikler</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Bu Kullanım Koşullarını zaman zaman kendi takdirimize bağlı olarak güncelleyebiliriz. Herhangi bir değişiklik bu sayfada yayınlandığında yürürlüğe girecektir. Önemli değişiklikler için sizi e-posta veya Uygulama içindeki belirgin bir bildirimle bilgilendireceğiz. Değişiklikler için bu Koşulları periyodik olarak gözden geçirmeniz tavsiye edilir.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">11. Geçerli Hukuk</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Bu Koşullar, kanunlar ihtilafı hükümlerine bakılmaksızın Türkiye Cumhuriyeti yasalarına göre yorumlanacak ve uygulanacaktır.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">12. Bize Ulaşın</h2>
+            <p class="text-gray-700 leading-relaxed">
+                Bu Kullanım Koşulları hakkında herhangi bir sorunuz varsa, lütfen bizimle iletişime geçin:
+            </p>
+            <ul class="list-disc list-inside text-gray-700 mt-2">
+                <li>E-posta: <a href="mailto:destek@piharita.com" class="text-pi-blue hover:underline">destek@piharita.com</a> (Örnek e-posta adresi)</li>
+                <li>Uygulama İçi Destek: Yakında eklenecek</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Alt Bilgi (Footer) (index.html ve privacy_policy.html ile aynı) -->
+    <footer class="bg-gray-800 text-white p-6 mt-8 rounded-t-lg">
+        <div class="container mx-auto text-center text-sm">
+            <p>&copy; 2025 Pi Harita. Tüm Hakları Saklıdır.</p>
+            <p class="mt-2">
+                <a href="privacy_policy.html" class="text-gray-400 hover:text-white transition duration-300">Gizlilik Politikası</a> |
+                <a href="terms_conditions.html" class="text-gray-400 hover:text-white transition duration-300">Kullanım Koşulları</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
