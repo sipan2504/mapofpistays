@@ -128,136 +128,6 @@
                         <button class="bg-pi-blue text-white text-sm px-3 py-1 rounded-full hover:bg-blue-700 transition duration-300">Detaylar</button>
                     </div>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-20<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi ile Konaklama Haritası - Küresel Pazar Yeri</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script src="https://sdk.minepi.com/v2/sdk.js"></script>
-
-    <style>
-        /* Varsayılan fontu Inter olarak ayarla */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Harita kapsayıcısının minimum yüksekliğini ayarla */
-        #map-container {
-            min-height: 400px; /* Mobil ve küçük ekranlar için uygun bir başlangıç yüksekliği */
-        }
-        /* Özel Tailwind renklerini tanımla (isteğe bağlı, ancak Pi temasına uygun olabilir) */
-        /* Bu kısım Tailwind yapılandırmasına eklenebilir, burada basitçe gösterilmiştir */
-        .bg-pi-blue { background-color: #1a73e8; } /* Örnek bir Pi mavisi */
-        .text-pi-yellow { color: #fbbc05; } /* Örnek bir Pi sarısı */
-        .accent-pi-blue { accent-color: #1a73e8; } /* Range slider için */
-
-        /* Pi Ödeme Butonu Stilleri */
-        .payment-button {
-            background-color: #6a1b9a; /* Pi moruna yakın bir renk */
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
-        }
-        .payment-button:hover {
-            background-color: #4a0072;
-        }
-        .payment-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-    </style>
-</head>
-<body class="bg-gray-100 flex flex-col min-h-screen">
-    <header class="bg-white shadow-md p-4 rounded-b-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">
-                <span class="text-pi-blue">Pi</span> <span class="text-pi-yellow">Harita</span>
-            </h1>
-            <nav class="hidden md:flex space-x-6">
-                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Konaklama</a>
-                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Ürünler</a>
-                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Hizmetler</a>
-                <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">İlan Ver</a>
-            </nav>
-            <div class="flex items-center space-x-4">
-                <button id="girisYapBtn" class="bg-pi-blue text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition duration-300">Giriş Yap</button>
-                <button class="md:hidden text-gray-600 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-grow container mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <aside class="md:col-span-1 bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">Haritada Keşfet</h2>
-            <div class="space-y-4">
-                <div>
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Konum</label>
-                    <input type="text" id="location" placeholder="Şehir, ülke veya adres..."
-                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-pi-blue focus:border-pi-blue">
-                </div>
-                <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                    <select id="category"
-                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-pi-blue focus:border-pi-blue">
-                        <option value="">Tümü</option>
-                        <option value="accommodation">Konaklama</option>
-                        <option value="products">Ürünler</option>
-                        <option value="services">Hizmetler</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="price-range" class="block text-sm font-medium text-gray-700 mb-1">Fiyat Aralığı (Pi)</label>
-                    <input type="range" id="price-range" min="0" max="1000" value="500"
-                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-pi-blue">
-                    <span class="text-sm text-gray-600 mt-1 block" id="priceValue">0 - 500 Pi</span> </div>
-                <button class="w-full bg-pi-blue text-white p-3 rounded-md shadow hover:bg-blue-700 transition duration-300 font-semibold">
-                    Ara
-                </button>
-            </div>
-        </aside>
-
-        <section class="md:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col">
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">Harita Görünümü</h2>
-            <div id="map-container" class="w-full bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-lg mb-6 flex-grow">
-                Harita Buraya Gelecek
-            </div>
-
-            <section class="pi-payment-section text-center mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h2 class="text-xl font-semibold mb-3 text-gray-800">Pi Test Ödemesi</h2>
-                <p class="text-gray-700 mb-4">Pi geliştirici sürecini tamamlamak için bu butonu kullanarak küçük bir test ödemesi yapın.</p>
-                <button id="payTestPiButton" class="payment-button">1 Pi Test Ödemesi Yap</button>
-                <div id="paymentStatus" class="mt-4 font-bold text-gray-700"></div>
-            </section>
-            <h2 class="text-xl font-semibold mb-4 text-gray-800">Öne Çıkan İlanlar</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
-                    <img src="https://placehold.co/300x200/E0F2F7/0056B3?text=Konaklama" alt="Konaklama Resmi" class="w-full h-32 object-cover rounded-md mb-3">
-                    <h3 class="font-semibold text-lg text-gray-800">Merkezi Konumda Daire</h3>
-                    <p class="text-gray-600 text-sm mb-2">Şehir Merkezi, İstanbul</p>
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-pi-blue">500 Pi / Gece</span>
-                        <button class="bg-pi-blue text-white text-sm px-3 py-1 rounded-full hover:bg-blue-700 transition duration-300">Detaylar</button>
-                    </div>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
-                    <img src="https://placehold.co/300x200/F0F8FF/0056B3?text=El+Yapımı" alt="Ürün Resmi" class="w-full h-32 object-cover rounded-md mb-3">
-                    <h3 class="font-semibold text-lg text-gray-800">El Yapımı Seramik Kupa</h3>
-                    <p class="text-gray-600 text-sm mb-2">Yerel Sanatçı</p>
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-pi-blue">25 Pi</span>
-                        <button class="bg-pi-blue text-white text-sm px-3 py-1 rounded-full hover:bg-blue-700 transition duration-300">Detaylar</button>
-                    </div>
-                </div>
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
                     <img src="https://placehold.co/300x200/F8F8F8/0056B3?text=Hizmet" alt="Hizmet Resmi" class="w-full h-32 object-cover rounded-md mb-3">
                     <h3 class="font-semibold text-lg text-gray-800">Web Sitesi Geliştirme</h3>
@@ -307,4 +177,126 @@
             Pi.init({
                 version: "2.0", // Pi SDK versiyonu
                 onIncompletePaymentFound: (payment) => {
-                    console.log
+                    console.log("Tamamlanmamış ödeme bulundu:", payment);
+                    updateButtonAndStatus("Tamamlanmamış ödeme: " + payment.identifier, true);
+                    // Burada tamamlanmamış ödemeyi işlemek için bir mantık ekleyebilirsiniz.
+                    // Örneğin: Pi.completePayment(payment.identifier);
+                },
+                onReadyForServerApproval: (paymentId) => {
+                    console.log("Sunucu onayı için hazır:", paymentId);
+                    // BURASI ÇOK ÖNEMLİ: Gerçek bir uygulamada, burada kendi sunucunuza bir istek göndererek
+                    // ödemeyi Pi Sunucusunda onaylatmanız gerekir.
+                    // Şimdilik sadece bilgilendirme amaçlı bırakılmıştır.
+                    // updateButtonAndStatus("Ödeme sunucu onayı bekliyor...", false);
+                },
+                onReadyForServerCompletion: (paymentId, txid) => {
+                    console.log("Sunucu tamamlanması için hazır:", paymentId, txid);
+                    // BURASI ÇOK ÖNEMLİ: Gerçek bir uygulamada, burada kendi sunucunuza bir istek göndererek
+                    // ödemeyi Pi Sunucusunda tamamlatmanız gerekir.
+                    // updateButtonAndStatus("Ödeme sunucu tamamlanması bekliyor...", false);
+                },
+                onCancel: (paymentId) => {
+                    console.log("Ödeme iptal edildi:", paymentId);
+                    updateButtonAndStatus("Ödeme iptal edildi.", true);
+                    alert("Ödeme iptal edildi!");
+                },
+                onComplete: (paymentId, txid) => {
+                    console.log("Ödeme başarıyla tamamlandı:", paymentId, txid);
+                    updateButtonAndStatus("Ödeme başarıyla tamamlandı! İşlem ID: " + txid, true);
+                    alert("Test ödemesi başarıyla tamamlandı!");
+
+                    // Burası ÇOK ÖNEMLİ:
+                    // Bu kısımda, ödemeyi sunucunuzda (veya Pi Core API'sinde) doğrulamanız ve
+                    // geliştirici portalındaki 11. maddeyi tamamlamak için ilgili Pi API çağrısını yapmanız gerekir.
+                    // Basit bir test için sadece mesaj göstermek yeterli olabilir, ancak gerçek bir uygulamada
+                    // bu ödemenin güvenli bir şekilde doğrulanması gerekecektir.
+                    // fetch('/api/verify-pi-payment', {
+                    //      method: 'POST',
+                    //      headers: { 'Content-Type': 'application/json' },
+                    //      body: JSON.stringify({ paymentId: paymentId })
+                    // })
+                    // .then(response => response.json())
+                    // .then(data => console.log('Ödeme doğrulama yanıtı:', data))
+                    // .catch(error => console.error('Ödeme doğrulama hatası:', error));
+                },
+                onError: (error, payment) => {
+                    console.error("Ödeme sırasında hata oluştu:", error, payment);
+                    updateButtonAndStatus("Ödeme hatası: " + error.message, true);
+                    alert("Ödeme sırasında bir hata oluştu: " + error.message);
+                },
+                onReadyForPayment: () => {
+                    console.log("Pi SDK ödemeler için hazır.");
+                    updateButtonAndStatus("Test ödemesi yapmaya hazır.", true); // Butonu aktif et
+                }
+            });
+
+            if (payTestPiButton) {
+                payTestPiButton.addEventListener('click', async () => {
+                    if (payTestPiButton.disabled) {
+                        return; // Eğer buton devre dışıysa tıklamayı yok say
+                    }
+                    updateButtonAndStatus("Ödeme başlatılıyor...", false); // Butonu devre dışı bırak
+                    
+                    try {
+                        // Pi.createPayment metoduna ikinci parametre olarak callbacks eklenmeli
+                        Pi.createPayment({
+                            amount: 1, // Test için küçük bir miktar Pi
+                            memo: "Uygulama Test Ödemesi", // İşlem açıklaması
+                            metadata: {
+                                purpose: "developer_app_test",
+                                timestamp: new Date().toISOString()
+                            }
+                        }, { // <<< Bu callbacks Pi.createPayment için
+                            onApprove: (paymentId) => {
+                                console.log("Ödeme kullanıcı tarafından onaylandı:", paymentId);
+                                updateButtonAndStatus("Ödeme onaylandı. Sunucu onayı bekleniyor: " + paymentId, false);
+                                // Gerçek bir uygulamada, burada sunucunuza ödemeyi onaylamak için istek gönderirsiniz.
+                            },
+                            onComplete: (paymentId, txid) => {
+                                console.log("Ödeme Pi Sunucusu tarafından tamamlandı:", paymentId, txid);
+                                updateButtonAndStatus("Ödeme tamamlandı! İşlem ID: " + txid, true);
+                                alert("Test ödemesi başarıyla tamamlandı!");
+                            },
+                            onCancel: (paymentId) => {
+                                console.log("Ödeme iptal edildi:", paymentId);
+                                updateButtonAndStatus("Ödeme iptal edildi.", true);
+                                alert("Ödeme iptal edildi!");
+                            },
+                            onError: (error, payment) => {
+                                console.error("Ödeme işleme sırasında hata oluştu (onApprove'dan sonra):", error, payment);
+                                updateButtonAndStatus("Ödeme işleme hatası: " + error.message, true);
+                                alert("Ödeme işleme sırasında bir hata oluştu: " + error.message);
+                            },
+                        });
+                    } catch (error) {
+                        console.error("Ödeme başlatılırken istisna:", error);
+                        updateButtonAndStatus("Ödeme başlatılamadı: " + error.message, true);
+                        alert("Ödeme başlatılırken bir hata oluştu: " + error.message);
+                    }
+                });
+            }
+        });
+
+        // Fiyat Aralığı Slider İçin JavaScript (mevcut kodunuzdan alındı)
+        const priceRange = document.getElementById('price-range');
+        const priceValue = document.getElementById('priceValue');
+
+        if (priceRange && priceValue) {
+            priceRange.addEventListener('input', function() {
+                priceValue.textContent = `0 - ${this.value} Pi`;
+            });
+            priceValue.textContent = `0 - ${priceRange.value} Pi`;
+        }
+
+        // "Giriş Yap" butonu için örnek olay dinleyici (mevcut kodunuzdan alındı)
+        document.getElementById('girisYapBtn').addEventListener('click', function() {
+            alert('Giriş Yap butonu tıklandı! Pi kimlik doğrulaması buraya entegre edilebilir.');
+        });
+
+        // Mobil menü butonu için örnek (mevcut kodunuzdan alındı)
+        document.querySelector('.md\\:hidden.text-gray-600').addEventListener('click', function() {
+            alert('Mobil Menü butonu tıklandı!');
+        });
+    </script>
+</body>
+    </html>
