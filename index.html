@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pi ile Konaklama Haritası - Küresel Pazar Yeri</title>
-    <!-- Inter fontunu yükle -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS CDN'i yükle - Hızlı stil için -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://sdk.minepi.com/v2/sdk.js"></script>
+
     <style>
         /* Varsayılan fontu Inter olarak ayarla */
         body {
@@ -21,27 +22,43 @@
         /* Bu kısım Tailwind yapılandırmasına eklenebilir, burada basitçe gösterilmiştir */
         .bg-pi-blue { background-color: #1a73e8; } /* Örnek bir Pi mavisi */
         .text-pi-yellow { color: #fbbc05; } /* Örnek bir Pi sarısı */
+        .accent-pi-blue { accent-color: #1a73e8; } /* Range slider için */
+
+        /* Pi Ödeme Butonu Stilleri */
+        .payment-button {
+            background-color: #6a1b9a; /* Pi moruna yakın bir renk */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        .payment-button:hover {
+            background-color: #4a0072;
+        }
+        .payment-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
-    <!-- Üst Navigasyon Çubuğu -->
     <header class="bg-white shadow-md p-4 rounded-b-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <!-- Logo veya Uygulama Adı -->
             <h1 class="text-2xl font-bold text-gray-800">
                 <span class="text-pi-blue">Pi</span> <span class="text-pi-yellow">Harita</span>
             </h1>
-            <!-- Navigasyon Menüsü (Mobil için gizli, büyük ekranlarda görünür) -->
             <nav class="hidden md:flex space-x-6">
                 <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Konaklama</a>
                 <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Ürünler</a>
                 <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Hizmetler</a>
                 <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">İlan Ver</a>
             </nav>
-            <!-- Kullanıcı İşlemleri (Giriş/Kayıt veya Profil) -->
             <div class="flex items-center space-x-4">
-                <button class="bg-pi-blue text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition duration-300">Giriş Yap</button>
-                <!-- Mobil menü butonu (küçük ekranlarda görünür) -->
+                <button id="girisYapBtn" class="bg-pi-blue text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition duration-300">Giriş Yap</button>
                 <button class="md:hidden text-gray-600 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
@@ -49,19 +66,15 @@
         </div>
     </header>
 
-    <!-- Ana İçerik Alanı -->
     <main class="flex-grow container mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Sol Panel: Arama ve Filtreler -->
         <aside class="md:col-span-1 bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4 text-gray-800">Haritada Keşfet</h2>
             <div class="space-y-4">
-                <!-- Arama Çubuğu -->
                 <div>
                     <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Konum</label>
                     <input type="text" id="location" placeholder="Şehir, ülke veya adres..."
                            class="w-full p-3 border border-gray-300 rounded-md focus:ring-pi-blue focus:border-pi-blue">
                 </div>
-                <!-- Kategori Seçimi -->
                 <div>
                     <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
                     <select id="category"
@@ -72,33 +85,31 @@
                         <option value="services">Hizmetler</option>
                     </select>
                 </div>
-                <!-- Fiyat Aralığı (Örnek) -->
                 <div>
                     <label for="price-range" class="block text-sm font-medium text-gray-700 mb-1">Fiyat Aralığı (Pi)</label>
                     <input type="range" id="price-range" min="0" max="1000" value="500"
                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-pi-blue">
-                    <span class="text-sm text-gray-600 mt-1 block">0 - 500 Pi</span>
-                </div>
-                <!-- Arama Butonu -->
+                    <span class="text-sm text-gray-600 mt-1 block" id="priceValue">0 - 500 Pi</span> </div>
                 <button class="w-full bg-pi-blue text-white p-3 rounded-md shadow hover:bg-blue-700 transition duration-300 font-semibold">
                     Ara
                 </button>
             </div>
         </aside>
 
-        <!-- Sağ Panel: Harita ve İlanlar -->
         <section class="md:col-span-2 bg-white p-6 rounded-lg shadow-md flex flex-col">
             <h2 class="text-xl font-semibold mb-4 text-gray-800">Harita Görünümü</h2>
-            <!-- Harita Yer Tutucusu -->
             <div id="map-container" class="w-full bg-gray-200 rounded-md flex items-center justify-center text-gray-500 text-lg mb-6 flex-grow">
-                <!-- Buraya harita API'si (örneğin Google Maps, OpenStreetMap) entegre edilecek -->
                 Harita Buraya Gelecek
             </div>
 
+            <section class="pi-payment-section text-center mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800">Pi Test Ödemesi</h2>
+                <p class="text-gray-700 mb-4">Pi geliştirici sürecini tamamlamak için bu butonu kullanarak küçük bir test ödemesi yapın.</p>
+                <button id="payTestPiButton" class="payment-button">1 Pi Test Ödemesi Yap</button>
+                <div id="paymentStatus" class="mt-4 font-bold text-gray-700"></div>
+            </section>
             <h2 class="text-xl font-semibold mb-4 text-gray-800">Öne Çıkan İlanlar</h2>
-            <!-- İlanlar İçin Yer Tutucu (Örnek Kartlar) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Örnek İlan Kartı 1 -->
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
                     <img src="https://placehold.co/300x200/E0F2F7/0056B3?text=Konaklama" alt="Konaklama Resmi" class="w-full h-32 object-cover rounded-md mb-3">
                     <h3 class="font-semibold text-lg text-gray-800">Merkezi Konumda Daire</h3>
@@ -108,7 +119,6 @@
                         <button class="bg-pi-blue text-white text-sm px-3 py-1 rounded-full hover:bg-blue-700 transition duration-300">Detaylar</button>
                     </div>
                 </div>
-                <!-- Örnek İlan Kartı 2 -->
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
                     <img src="https://placehold.co/300x200/F0F8FF/0056B3?text=El+Yapımı" alt="Ürün Resmi" class="w-full h-32 object-cover rounded-md mb-3">
                     <h3 class="font-semibold text-lg text-gray-800">El Yapımı Seramik Kupa</h3>
@@ -118,7 +128,6 @@
                         <button class="bg-pi-blue text-white text-sm px-3 py-1 rounded-full hover:bg-blue-700 transition duration-300">Detaylar</button>
                     </div>
                 </div>
-                <!-- Örnek İlan Kartı 3 -->
                 <div class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
                     <img src="https://placehold.co/300x200/F8F8F8/0056B3?text=Hizmet" alt="Hizmet Resmi" class="w-full h-32 object-cover rounded-md mb-3">
                     <h3 class="font-semibold text-lg text-gray-800">Web Sitesi Geliştirme</h3>
@@ -132,7 +141,6 @@
         </section>
     </main>
 
-    <!-- Alt Bilgi (Footer) -->
     <footer class="bg-gray-800 text-white p-6 mt-8 rounded-t-lg">
         <div class="container mx-auto text-center text-sm">
             <p>&copy; 2025 Pi Harita. Tüm Hakları Saklıdır.</p>
@@ -142,5 +150,106 @@
             </p>
         </div>
     </footer>
+
+    <script>
+        // Pi SDK Başlatma ve Ödeme İşlevselliği
+        Pi.init({
+            onReadyForAuth: function() {
+                console.log("Pi SDK kimlik doğrulaması için hazır.");
+                // Kimlik doğrulama akışı buradan başlatılabilir (isteğe bağlı)
+                // Örneğin: document.getElementById('girisYapBtn').addEventListener('click', () => Pi.authenticate((auth) => console.log(auth)));
+            },
+            onReadyForPayment: function() {
+                console.log("Pi SDK ödemeler için hazır.");
+                document.getElementById('payTestPiButton').disabled = false; // Ödeme butonunu aktif et
+            },
+            onIncompletePayment: function(payment) {
+                console.log("Tamamlanmamış ödeme bulundu:", payment);
+                document.getElementById('paymentStatus').innerText = "Tamamlanmamış ödeme: " + payment.identifier;
+            },
+            onCancel: function(paymentId) {
+                console.log("Ödeme iptal edildi:", paymentId);
+                document.getElementById('paymentStatus').innerText = "Ödeme iptal edildi.";
+                alert("Ödeme iptal edildi!");
+                document.getElementById('payTestPiButton').disabled = false; // Butonu tekrar aktif et
+            },
+            onComplete: function(paymentId) {
+                console.log("Ödeme başarıyla tamamlandı:", paymentId);
+                document.getElementById('paymentStatus').innerText = "Ödeme başarıyla tamamlandı! İşlem ID: " + paymentId;
+                alert("Test ödemesi başarıyla tamamlandı!");
+
+                // Burası ÇOK ÖNEMLİ:
+                // Bu kısımda, ödemeyi sunucunuzda (veya Pi Core API'sinde) doğrulamanız ve
+                // geliştirici portalındaki 11. maddeyi tamamlamak için ilgili Pi API çağrısını yapmanız gerekir.
+                // Basit bir test için sadece mesaj göstermek yeterli olabilir, ancak gerçek bir uygulamada
+                // bu ödemenin güvenli bir şekilde doğrulanması gerekecektir.
+                // fetch('/api/verify-pi-payment', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ paymentId: paymentId })
+                // })
+                // .then(response => response.json())
+                // .then(data => console.log('Ödeme doğrulama yanıtı:', data))
+                // .catch(error => console.error('Ödeme doğrulama hatası:', error));
+
+                document.getElementById('payTestPiButton').disabled = false; // Butonu tekrar aktif et
+            },
+            onError: function(error, payment) {
+                console.error("Ödeme sırasında hata oluştu:", error, payment);
+                document.getElementById('paymentStatus').innerText = "Ödeme hatası: " + error.message;
+                alert("Ödeme sırasında bir hata oluştu: " + error.message);
+                document.getElementById('payTestPiButton').disabled = false; // Butonu tekrar aktif et
+            },
+        });
+
+        // Ödeme Butonuna Tıklama Olayı
+        document.getElementById('payTestPiButton').addEventListener('click', function() {
+            // Butonu geçici olarak devre dışı bırak
+            document.getElementById('payTestPiButton').disabled = true;
+            document.getElementById('paymentStatus').innerText = "Ödeme başlatılıyor...";
+
+            try {
+                Pi.createPayment({
+                    amount: 1, // Test için küçük bir miktar Pi
+                    memo: "Uygulama Test Ödemesi", // İşlem açıklaması
+                    metadata: {
+                        purpose: "developer_app_test",
+                        timestamp: new Date().toISOString()
+                    }
+                });
+            } catch (error) {
+                console.error("Ödeme başlatılırken istisna:", error);
+                document.getElementById('paymentStatus').innerText = "Ödeme başlatılamadı: " + error.message;
+                alert("Ödeme başlatılırken bir hata oluştu: " + error.message);
+                document.getElementById('payTestPiButton').disabled = false; // Hatada butonu tekrar aktif et
+            }
+        });
+
+        // Fiyat Aralığı Slider İçin JavaScript
+        const priceRange = document.getElementById('price-range'); // ID düzeltildi
+        const priceValue = document.getElementById('priceValue');
+
+        if (priceRange && priceValue) { // Elementlerin varlığını kontrol et
+            priceRange.addEventListener('input', function() {
+                priceValue.textContent = `0 - ${this.value} Pi`; // Metin güncellendi
+            });
+            // Başlangıç değerini ayarla
+            priceValue.textContent = `0 - ${priceRange.value} Pi`;
+        }
+
+
+        // "Giriş Yap" butonu için örnek olay dinleyici
+        document.getElementById('girisYapBtn').addEventListener('click', function() {
+            alert('Giriş Yap butonu tıklandı! Pi kimlik doğrulaması buraya entegre edilebilir.');
+            // Pi kimlik doğrulama akışını buradan başlatabilirsiniz:
+            // Pi.authenticate((auth) => console.log(auth));
+        });
+
+        // Mobil menü butonu için örnek
+        document.querySelector('.md\\:hidden.text-gray-600').addEventListener('click', function() { // Seçici düzeltildi
+            alert('Mobil Menü butonu tıklandı!');
+            // Menü açma/kapama işlevselliği eklenebilir
+        });
+    </script>
 </body>
-</html>
+                                                                                                                                      </html>
