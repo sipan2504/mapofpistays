@@ -5,18 +5,39 @@
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
-<body style="text-align:center; margin-top:100px;">
+<body style="text-align:center; margin-top:100px; font-family:sans-serif;">
 
+<h2>Pi Ödeme</h2>
+
+<button onclick="login()">Giriş Yap</button>
+<br><br>
 <button onclick="pay()">0.01 Pi Gönder</button>
+
 <p id="t"></p>
 
 <script>
   Pi.init({
     version: "2.0",
     key: ""
-  });jvx4v0zqp0viz8j8j5v3iqdjxqpr8cgebrikbjpdrrzrrhr2wlywuwyouqmm79vg
+  });nhnvsbr73axqfxdotwopnvodzfiba0n5oth8c93utchoo7ikswx7k4bqogtqphxc
+
+  let user = null;
+
+  function login() {
+    Pi.authenticate(['payments'], function(auth) {
+      user = auth.user;
+      document.getElementById("t").innerText = "Giriş başarılı ✅";
+    }, function(error) {
+      document.getElementById("t").innerText = "Giriş hatası";
+    });
+  }
 
   function pay() {
+    if (!user) {
+      document.getElementById("t").innerText = "Önce giriş yap!";
+      return;
+    }
+
     document.getElementById("t").innerText = "Ödeme başlatılıyor...";
 
     Pi.createPayment({
@@ -35,8 +56,9 @@
       onCancel: function() {
         document.getElementById("t").innerText = "İptal";
       },
-      onError: function() {
+      onError: function(error) {
         document.getElementById("t").innerText = "Hata";
+        console.log(error);
       }
     });
   }
