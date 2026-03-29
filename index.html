@@ -16,34 +16,33 @@
 <p id="t">Yükleniyor...</p>
 
 <script>
-let ready = false;
+let user = null;
 
 // Pi başlat
-window.onload = function () {
-  Pi.init({ version: "2.0", sandbox: true });
-  ready = true;
-  document.getElementById("t").innerText = "Hazır 👍";
+window.onload = async function () {
+  try {
+    await Pi.init({ version: "2.0", sandbox: true });
+    document.getElementById("t").innerText = "Hazır 👍";
+  } catch (e) {
+    document.getElementById("t").innerText = "Pi yüklenemedi ❌";
+  }
 };
 
 // Giriş
-document.getElementById("loginBtn").onclick = function () {
-  if (!ready) {
-    document.getElementById("t").innerText = "Bekle...";
-    return;
-  }
-
+document.getElementById("loginBtn").onclick = async function () {
   document.getElementById("t").innerText = "Giriş yapılıyor...";
 
-  Pi.authenticate(['payments'], function () {
+  try {
+    user = await Pi.authenticate(['payments']);
     document.getElementById("t").innerText = "Giriş başarılı ✅";
-  }, function () {
+  } catch (e) {
     document.getElementById("t").innerText = "Hata ❌";
-  });
+  }
 };
 
 // Ödeme
 document.getElementById("payBtn").onclick = function () {
-  if (!ready) {
+  if (!user) {
     document.getElementById("t").innerText = "Önce giriş yap";
     return;
   }
