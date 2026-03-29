@@ -18,8 +18,8 @@
 <script>
   Pi.init({
     version: "2.0",
-    key: ""
-  });nhnvsbr73axqfxdotwopnvodzfiba0n5oth8c93utchoo7ikswx7k4bqogtqphxc
+    key: "BURAYA_API_KEY"
+  });
 
   let user = null;
 
@@ -38,26 +38,24 @@
       return;
     }
 
-    document.getElementById("t").innerText = "Ödeme başlatılıyor...";
+    document.getElementById("t").innerText = "Ödeme açılıyor...";
 
     Pi.createPayment({
       amount: 0.01,
-      memo: "Test",
-      metadata: {}
+      memo: "Test ödeme",
+      metadata: { test: true }
     }, {
       onReadyForServerApproval: function(paymentId) {
-        setTimeout(function() {
-          Pi.completePayment(paymentId);
-        }, 1000);
+        console.log("Onay bekleniyor:", paymentId);
       },
-      onReadyForServerCompletion: function() {
+      onReadyForServerCompletion: function(paymentId, txid) {
         document.getElementById("t").innerText = "Tamamlandı ✅";
       },
       onCancel: function() {
-        document.getElementById("t").innerText = "İptal";
+        document.getElementById("t").innerText = "İptal edildi";
       },
       onError: function(error) {
-        document.getElementById("t").innerText = "Hata";
+        document.getElementById("t").innerText = "Hata oluştu";
         console.log(error);
       }
     });
