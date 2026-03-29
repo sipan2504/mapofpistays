@@ -2,52 +2,42 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Pi Ödeme</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
-<body style="text-align:center; margin-top:100px; font-family:sans-serif;">
+<body style="text-align:center; margin-top:100px;">
 
-<h2>Pi Test Ödeme</h2>
-
-<button onclick="odeme()" style="padding:15px; font-size:18px;">
-  0.01 Pi Gönder
-</button>
-
-<p id="yazi"></p>
+<button onclick="pay()">0.01 Pi Gönder</button>
+<p id="t"></p>
 
 <script>
-  // BASİT BAŞLATMA (sandbox kapalı)
-  Pi.init({ version: "2.0" });
+  Pi.init({
+    version: "2.0",
+    key: "BURAYA_API_KEY_YAPIŞTIR"
+  });
 
-  function odeme() {
-    document.getElementById("yazi").innerText = "Ödeme başlatılıyor...";
+  function pay() {
+    document.getElementById("t").innerText = "Ödeme başlatılıyor...";
 
     Pi.createPayment({
       amount: 0.01,
       memo: "Test",
-      metadata: { test: true }
+      metadata: {}
     }, {
-
       onReadyForServerApproval: function(paymentId) {
-        // TAKILMAYI ENGELLEYEN KISIM
         setTimeout(function() {
           Pi.completePayment(paymentId);
         }, 1000);
       },
-
-      onReadyForServerCompletion: function(paymentId, txid) {
-        document.getElementById("yazi").innerText = "Ödeme tamamlandı ✅";
+      onReadyForServerCompletion: function() {
+        document.getElementById("t").innerText = "Tamamlandı ✅";
       },
-
       onCancel: function() {
-        document.getElementById("yazi").innerText = "İptal edildi";
+        document.getElementById("t").innerText = "İptal";
       },
-
       onError: function() {
-        document.getElementById("yazi").innerText = "Hata oluştu";
+        document.getElementById("t").innerText = "Hata";
       }
-
     });
   }
 </script>
