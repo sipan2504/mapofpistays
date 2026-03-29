@@ -1,57 +1,49 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pi ile Konaklama Haritası - Küresel Pazar Yeri</title>
-  <meta name="description" content="Pi Coin ile global konaklama, ürün ve hizmet pazarı haritası. Test ödemeleri ve ilan sistemi ile entegre.">
-  <meta name="author" content="Pi Harita Takımı">
-  <meta name="robots" content="index, follow">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    #map-container {
-      min-height: 50vh;
-    }
-    .bg-pi-blue { background-color: #1a73e8; }
-    .text-pi-yellow { color: #fbbc05; }
-    .accent-pi-blue { accent-color: #1a73e8; }
-    .payment-button {
-      background-color: #6a1b9a;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.1em;
-      transition: background-color 0.3s ease;
-    }
-    .payment-button:hover {
-      background-color: #4a0072;
-    }
-    .payment-button:disabled {
-      background-color: #cccccc;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Pi Test Payment</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
-<body class="bg-gray-100 flex flex-col min-h-screen">
-  <header class="bg-white shadow-md p-4 rounded-b-lg">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-800">
-        <span class="text-pi-blue">Pi</span> <span class="text-pi-yellow">Harita</span>
-      </h1>
-      <nav class="hidden md:flex space-x-6">
-        <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Konaklama</a>
-        <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Ürünler</a>
-        <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">Hizmetler</a>
-        <a href="#" class="text-gray-600 hover:text-pi-blue transition duration-300">İlan Ver</a>
-      </nav>
-      <div class="flex items-center space-x-4">
-        <button id="girisYapBtn" class="bg-pi-blue text-white px-4 py-2 rounded-full shadow hover:bg-blue-700 transition duration-300
+<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
+
+  <h1>Pi Test Ödeme</h1>
+
+  <button onclick="payWithPi()" style="padding:15px; font-size:18px;">
+    0.01 Pi Gönder
+  </button>
+
+  <p id="status"></p>
+
+  <script>
+    Pi.init({ version: "2.0", sandbox: true });
+
+    function payWithPi() {
+      document.getElementById("status").innerText = "Ödeme başlatılıyor...";
+
+      Pi.createPayment({
+        amount: 0.01,
+        memo: "Test ödeme",
+        metadata: { orderId: "12345" }
+      }, {
+        onReadyForServerApproval: function(paymentId) {
+          console.log("Hazır:", paymentId);
+        },
+        onReadyForServerCompletion: function(paymentId, txid) {
+          document.getElementById("status").innerText = "Ödeme tamamlandı ✅";
+          console.log("Tamamlandı:", paymentId, txid);
+        },
+        onCancel: function(paymentId) {
+          document.getElementById("status").innerText = "İptal edildi ❌";
+        },
+        onError: function(error, payment) {
+          document.getElementById("status").innerText = "Hata oluştu ❌";
+          console.error(error);
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
