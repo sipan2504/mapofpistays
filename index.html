@@ -22,11 +22,15 @@ Pi.init({
 });
 
 function login() {
-  Pi.authenticate(['payments'], function(auth) {
-    document.getElementById("t").innerText = "Giriş başarılı ✅";
-  }, function(error) {
-    document.getElementById("t").innerText = "Giriş hatası ❌";
-  });
+  document.getElementById("t").innerText = "Giriş yapılıyor...";
+
+  Pi.authenticate(['payments'])
+    .then(function(auth) {
+      document.getElementById("t").innerText = "Giriş başarılı ✅";
+    })
+    .catch(function(error) {
+      document.getElementById("t").innerText = "Hata ❌";
+    });
 }
 
 function pay() {
@@ -34,21 +38,19 @@ function pay() {
 
   Pi.createPayment({
     amount: 0.01,
-    memo: "Test",
+    memo: "Test ödeme",
     metadata: {}
   }, {
     onReadyForServerApproval: function(paymentId) {
-      setTimeout(function() {
-        Pi.completePayment(paymentId);
-      }, 1000);
+      document.getElementById("t").innerText = "Onay bekleniyor...";
     },
     onReadyForServerCompletion: function() {
       document.getElementById("t").innerText = "Tamamlandı ✅";
     },
     onCancel: function() {
-      document.getElementById("t").innerText = "İptal";
+      document.getElementById("t").innerText = "İptal edildi";
     },
-    onError: function() {
+    onError: function(error) {
       document.getElementById("t").innerText = "Hata ❌";
     }
   });
