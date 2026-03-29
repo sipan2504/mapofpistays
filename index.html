@@ -5,61 +5,59 @@
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
-<body style="text-align:center; margin-top:100px; font-family:sans-serif;">
+<body style="text-align:center; margin-top:100px;">
 
 <h2>Pi Ödeme</h2>
 
-<button onclick="login()">Giriş Yap</button>
+<button id="loginBtn">Giriş Yap</button>
 <br><br>
-<button onclick="pay()">0.01 Pi Gönder</button>
+<button id="payBtn">0.01 Pi Gönder</button>
 
 <p id="t"></p>
 
 <script>
   Pi.init({
     version: "2.0",
-    key: "BURAYA_API_KEY"
+    key: "nbzcpf7bttj8xagxzqva2ldujjr6jk7zdyfgep2jiv52vzcje3qkxq5ohvlms1zb"
   });
 
   let user = null;
 
-  function login() {
+  document.getElementById("loginBtn").onclick = function() {
     Pi.authenticate(['payments'], function(auth) {
       user = auth.user;
       document.getElementById("t").innerText = "Giriş başarılı ✅";
-    }, function(error) {
+    }, function() {
       document.getElementById("t").innerText = "Giriş hatası";
     });
-  }
+  };
 
-  function pay() {
+  document.getElementById("payBtn").onclick = function() {
     if (!user) {
       document.getElementById("t").innerText = "Önce giriş yap!";
       return;
     }
 
-    document.getElementById("t").innerText = "Ödeme açılıyor...";
-
     Pi.createPayment({
       amount: 0.01,
-      memo: "Test ödeme",
-      metadata: { test: true }
+      memo: "Test",
+      metadata: {}
     }, {
       onReadyForServerApproval: function(paymentId) {
-        console.log("Onay bekleniyor:", paymentId);
+        console.log(paymentId);
       },
-      onReadyForServerCompletion: function(paymentId, txid) {
+      onReadyForServerCompletion: function() {
         document.getElementById("t").innerText = "Tamamlandı ✅";
       },
       onCancel: function() {
-        document.getElementById("t").innerText = "İptal edildi";
+        document.getElementById("t").innerText = "İptal";
       },
-      onError: function(error) {
-        document.getElementById("t").innerText = "Hata oluştu";
-        console.log(error);
+      onError: function(e) {
+        document.getElementById("t").innerText = "Hata";
+        console.log(e);
       }
     });
-  }
+  };
 </script>
 
 </body>
