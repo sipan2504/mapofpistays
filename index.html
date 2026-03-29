@@ -16,30 +16,44 @@
 <p id="t"></p>
 
 <script>
+let piReady = false;
+
 document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("t").innerText = "Pi yükleniyor...";
 
-  Pi.init({
-    version: "2.0",
-    sandbox: true
-  });
-
+  setTimeout(function () {
+    Pi.init({
+      version: "2.0",
+      sandbox: true
+    });
+    piReady = true;
+    document.getElementById("t").innerText = "Hazır 👍";
+  }, 1000);
 });
 
 function login() {
+  if (!piReady) {
+    document.getElementById("t").innerText = "Henüz hazır değil, bekle...";
+    return;
+  }
+
   document.getElementById("t").innerText = "Giriş yapılıyor...";
 
-  setTimeout(function () {
-    Pi.authenticate(['payments'])
-      .then(function (auth) {
-        document.getElementById("t").innerText = "Giriş başarılı ✅";
-      })
-      .catch(function (error) {
-        document.getElementById("t").innerText = "Hata ❌";
-      });
-  }, 500);
+  Pi.authenticate(['payments'])
+    .then(function (auth) {
+      document.getElementById("t").innerText = "Giriş başarılı ✅";
+    })
+    .catch(function (error) {
+      document.getElementById("t").innerText = "Hata ❌";
+    });
 }
 
 function pay() {
+  if (!piReady) {
+    document.getElementById("t").innerText = "Önce giriş yap";
+    return;
+  }
+
   document.getElementById("t").innerText = "Ödeme başlatılıyor...";
 
   Pi.createPayment({
@@ -47,7 +61,7 @@ function pay() {
     memo: "Test ödeme",
     metadata: {}
   }, {
-    onReadyForServerApproval: function (paymentId) {
+    onReadyForServerApproval: function () {
       document.getElementById("t").innerText = "Onay bekleniyor...";
     },
     onReadyForServerCompletion: function () {
@@ -56,7 +70,7 @@ function pay() {
     onCancel: function () {
       document.getElementById("t").innerText = "İptal edildi";
     },
-    onError: function (error) {
+    onError: function () {
       document.getElementById("t").innerText = "Hata ❌";
     }
   });
