@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pi Sandbox Test Ödeme</title>
+</head>
+<body>
+  <h2>Pi Sandbox Test Ödeme</h2>
+  
+  <!-- Gönder Butonu -->
+  <button id="sendButton">0.01 Pi Gönder</button>
+
+  <script>
+    // Pi Testnet gönderim fonksiyonu
+    async function sendPi(amount, recipient) {
+      try {
+        // Metadata otomatik ekleniyor
+        const paymentData = {
+          amount: amount,
+          recipient: recipient,
+          metadata: "Sandbox test payment"
+        };
+
+        // Pi Testnet API çağrısı (simülasyon)
+        // Gerçek kullanım: piAPI.sendPayment(paymentData)
+        console.log("Simüle Edilen Ödeme ✅", paymentData);
+        alert(`Ödeme başarılı! ${amount} Pi gönderildi.`);
+      } catch (error) {
+        console.error("Hata ⚠️", error);
+        alert(`Ödeme sırasında hata oluştu: ${error.message}`);
+      }
+    }
+
+    // Buton tıklamasıyla ödeme gönder
+    document.getElementById("sendButton").addEventListener("click", () => {
+      const amount = 0.01;             // Gönderilecek Pi miktarı
+      const recipient = "user_pi_id";  // Test alıcı Pi ID
+      sendPi(amount, recipient);
+    });
+  </script>
+</body>
+</html>
