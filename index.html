@@ -7,47 +7,43 @@
 
 <body style="text-align:center; margin-top:100px;">
 
-<h2>Pi Test Ödeme</h2>
+<h2>Pi Test</h2>
 
-<button onclick="login()">Giriş Yap</button>
+<button id="loginBtn">Giriş Yap</button>
 <br><br>
-<button onclick="pay()">0.01 Pi Gönder</button>
+<button id="payBtn">0.01 Pi Gönder</button>
 
-<p id="t"></p>
+<p id="t">Yükleniyor...</p>
 
 <script>
-let piReady = false;
+let ready = false;
 
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("t").innerText = "Pi yükleniyor...";
+// Pi başlat
+window.onload = function () {
+  Pi.init({ version: "2.0", sandbox: true });
+  ready = true;
+  document.getElementById("t").innerText = "Hazır 👍";
+};
 
-  setTimeout(function () {
-    Pi.init({
-      version: "2.0",
-      sandbox: true
-    });
-    piReady = true;
-    document.getElementById("t").innerText = "Hazır 👍";
-  }, 1000);
-});
-
-function login() {
-  if (!piReady) {
-    document.getElementById("t").innerText = "Henüz hazır değil";
+// Giriş
+document.getElementById("loginBtn").onclick = function () {
+  if (!ready) {
+    document.getElementById("t").innerText = "Bekle...";
     return;
   }
 
   document.getElementById("t").innerText = "Giriş yapılıyor...";
 
-  Pi.authenticate(['payments'], function(auth) {
+  Pi.authenticate(['payments'], function () {
     document.getElementById("t").innerText = "Giriş başarılı ✅";
-  }, function(error) {
+  }, function () {
     document.getElementById("t").innerText = "Hata ❌";
   });
-}
+};
 
-function pay() {
-  if (!piReady) {
+// Ödeme
+document.getElementById("payBtn").onclick = function () {
+  if (!ready) {
     document.getElementById("t").innerText = "Önce giriş yap";
     return;
   }
@@ -56,23 +52,21 @@ function pay() {
 
   Pi.createPayment({
     amount: 0.01,
-    memo: "Test ödeme",
+    memo: "Test",
     metadata: {}
   }, {
-    onReadyForServerApproval: function () {
-      document.getElementById("t").innerText = "Onay bekleniyor...";
-    },
+    onReadyForServerApproval: function () {},
     onReadyForServerCompletion: function () {
       document.getElementById("t").innerText = "Tamamlandı ✅";
     },
     onCancel: function () {
-      document.getElementById("t").innerText = "İptal edildi";
+      document.getElementById("t").innerText = "İptal";
     },
     onError: function () {
       document.getElementById("t").innerText = "Hata ❌";
     }
   });
-}
+};
 </script>
 
 </body>
