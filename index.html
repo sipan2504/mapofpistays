@@ -33,19 +33,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function login() {
   if (!piReady) {
-    document.getElementById("t").innerText = "Henüz hazır değil, bekle...";
+    document.getElementById("t").innerText = "Henüz hazır değil";
     return;
   }
 
   document.getElementById("t").innerText = "Giriş yapılıyor...";
 
-  Pi.authenticate(['payments'])
-    .then(function (auth) {
-      document.getElementById("t").innerText = "Giriş başarılı ✅";
-    })
-    .catch(function (error) {
-      document.getElementById("t").innerText = "Hata ❌";
-    });
+  Pi.authenticate(['payments'], function(auth) {
+    document.getElementById("t").innerText = "Giriş başarılı ✅";
+  }, function(error) {
+    document.getElementById("t").innerText = "Hata ❌";
+  });
 }
 
 function pay() {
