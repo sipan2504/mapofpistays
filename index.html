@@ -16,21 +16,27 @@
 <p id="t"></p>
 
 <script>
-Pi.init({
-  version: "2.0",
-  sandbox: true
+document.addEventListener("DOMContentLoaded", function () {
+
+  Pi.init({
+    version: "2.0",
+    sandbox: true
+  });
+
 });
 
 function login() {
   document.getElementById("t").innerText = "Giriş yapılıyor...";
 
-  Pi.authenticate(['payments'])
-    .then(function(auth) {
-      document.getElementById("t").innerText = "Giriş başarılı ✅";
-    })
-    .catch(function(error) {
-      document.getElementById("t").innerText = "Hata ❌";
-    });
+  setTimeout(function () {
+    Pi.authenticate(['payments'])
+      .then(function (auth) {
+        document.getElementById("t").innerText = "Giriş başarılı ✅";
+      })
+      .catch(function (error) {
+        document.getElementById("t").innerText = "Hata ❌";
+      });
+  }, 500);
 }
 
 function pay() {
@@ -41,16 +47,16 @@ function pay() {
     memo: "Test ödeme",
     metadata: {}
   }, {
-    onReadyForServerApproval: function(paymentId) {
+    onReadyForServerApproval: function (paymentId) {
       document.getElementById("t").innerText = "Onay bekleniyor...";
     },
-    onReadyForServerCompletion: function() {
+    onReadyForServerCompletion: function () {
       document.getElementById("t").innerText = "Tamamlandı ✅";
     },
-    onCancel: function() {
+    onCancel: function () {
       document.getElementById("t").innerText = "İptal edildi";
     },
-    onError: function(error) {
+    onError: function (error) {
       document.getElementById("t").innerText = "Hata ❌";
     }
   });
