@@ -24,4 +24,56 @@ window.onload = async function () {
     await Pi.init({ version: "2.0", sandbox: true });
     document.getElementById("t").innerText = "Hazır 👍";
   } catch (e) {
-    document.getElementById("t").
+    document.getElementById("t").innerText = "Pi yüklenemedi ❌";
+  }
+};
+
+// Giriş
+document.getElementById("loginBtn").onclick = async function () {
+  document.getElementById("t").innerText = "Giriş yapılıyor...";
+
+  try {
+    user = await Pi.authenticate(['payments']);
+    document.getElementById("t").innerText = "Giriş başarılı ✅";
+  } catch (e) {
+    document.getElementById("t").innerText = "Giriş hatası ❌";
+    console.error(e);
+  }
+};
+
+// Ödeme
+document.getElementById("payBtn").onclick = function () {
+  if (!user) {
+    document.getElementById("t").innerText = "Önce giriş yap";
+    return;
+  }
+
+  document.getElementById("t").innerText = "Ödeme başlatılıyor...";
+
+  Pi.createPayment({
+    amount: 0.01,
+    memo: "Test ödeme",
+    metadata: { info: "test payment" } // 🔥 BOŞ DEĞİL
+  }, {
+    onReadyForServerApproval: function (paymentId) {
+      console.log("Onay için hazır:", paymentId);
+      // 🔥 Server yok → bu aşama geçiliyor
+    },
+    onReadyForServerCompletion: function (paymentId, txid) {
+      document.getElementById("t").innerText = "Ödeme tamamlandı ✅";
+      console.log("Tamamlandı:", paymentId, txid);
+    },
+    onCancel: function (paymentId) {
+      document.getElementById("t").innerText = "İptal edildi";
+      console.log("İptal:", paymentId);
+    },
+    onError: function (error, payment) {
+      document.getElementById("t").innerText = "Hata ❌";
+      console.error("Hata:", error);
+    }
+  });
+};
+</script>
+
+</body>
+</html>
