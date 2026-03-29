@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Pi Test Payment</title>
+  <title>Pi Test Ödeme</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
@@ -29,14 +29,22 @@
       }, {
         onReadyForServerApproval: function(paymentId) {
           console.log("Hazır:", paymentId);
+
+          // OTOMATİK ONAY (EN KRİTİK KISIM)
+          setTimeout(function() {
+            Pi.completePayment(paymentId);
+          }, 1000);
         },
+
         onReadyForServerCompletion: function(paymentId, txid) {
           document.getElementById("status").innerText = "Ödeme tamamlandı ✅";
           console.log("Tamamlandı:", paymentId, txid);
         },
+
         onCancel: function(paymentId) {
           document.getElementById("status").innerText = "İptal edildi ❌";
         },
+
         onError: function(error, payment) {
           document.getElementById("status").innerText = "Hata oluştu ❌";
           console.error(error);
