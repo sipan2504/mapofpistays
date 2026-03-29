@@ -1,57 +1,56 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Pi Test Ödeme</title>
+  <title>Pi Ödeme</title>
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
-<body style="text-align:center; font-family:sans-serif; margin-top:100px;">
+<body style="text-align:center; margin-top:100px; font-family:sans-serif;">
 
-  <h1>Pi Test Ödeme</h1>
+<h2>Pi Test Ödeme</h2>
 
-  <button onclick="payWithPi()" style="padding:15px; font-size:18px;">
-    0.01 Pi Gönder
-  </button>
+<button onclick="odeme()" style="padding:15px; font-size:18px;">
+  0.01 Pi Gönder
+</button>
 
-  <p id="status"></p>
+<p id="yazi"></p>
 
-  <script>
-    Pi.init({ version: "2.0", sandbox: true });
+<script>
+  // BASİT BAŞLATMA (sandbox kapalı)
+  Pi.init({ version: "2.0" });
 
-    function payWithPi() {
-      document.getElementById("status").innerText = "Ödeme başlatılıyor...";
+  function odeme() {
+    document.getElementById("yazi").innerText = "Ödeme başlatılıyor...";
 
-      Pi.createPayment({
-        amount: 0.01,
-        memo: "Test ödeme",
-        metadata: { orderId: "12345" }
-      }, {
-        onReadyForServerApproval: function(paymentId) {
-          console.log("Hazır:", paymentId);
+    Pi.createPayment({
+      amount: 0.01,
+      memo: "Test",
+      metadata: { test: true }
+    }, {
 
-          // OTOMATİK ONAY (EN KRİTİK KISIM)
-          setTimeout(function() {
-            Pi.completePayment(paymentId);
-          }, 1000);
-        },
+      onReadyForServerApproval: function(paymentId) {
+        // TAKILMAYI ENGELLEYEN KISIM
+        setTimeout(function() {
+          Pi.completePayment(paymentId);
+        }, 1000);
+      },
 
-        onReadyForServerCompletion: function(paymentId, txid) {
-          document.getElementById("status").innerText = "Ödeme tamamlandı ✅";
-          console.log("Tamamlandı:", paymentId, txid);
-        },
+      onReadyForServerCompletion: function(paymentId, txid) {
+        document.getElementById("yazi").innerText = "Ödeme tamamlandı ✅";
+      },
 
-        onCancel: function(paymentId) {
-          document.getElementById("status").innerText = "İptal edildi ❌";
-        },
+      onCancel: function() {
+        document.getElementById("yazi").innerText = "İptal edildi";
+      },
 
-        onError: function(error, payment) {
-          document.getElementById("status").innerText = "Hata oluştu ❌";
-          console.error(error);
-        }
-      });
-    }
-  </script>
+      onError: function() {
+        document.getElementById("yazi").innerText = "Hata oluştu";
+      }
+
+    });
+  }
+</script>
 
 </body>
 </html>
