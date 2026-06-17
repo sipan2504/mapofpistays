@@ -11,11 +11,12 @@
 body{
 font-family:Arial,sans-serif;
 text-align:center;
-padding-top:80px;
+padding-top:100px;
 }
+
 button{
 padding:15px 30px;
-font-size:20px;
+font-size:24px;
 margin:10px;
 }
 </style>
@@ -25,7 +26,7 @@ margin:10px;
 
 <h1>Pi Test App</h1>
 
-<p id="status">Yükleniyor...</p>
+<p id="status">Başlatılıyor...</p>
 
 <button id="loginBtn">Pi Giriş Yap</button>
 <br>
@@ -35,36 +36,57 @@ margin:10px;
 
 let currentUser = null;
 
-async function loginPi() {
+async function initPi() {
 
   try {
 
-    Pi.init({
+    await Pi.init({
       version: "2.0",
-      sandbox: true
+      sandbox: false
     });
 
-    const scopes = ["username", "payments"];
+    document.getElementById("status").innerHTML =
+      "Pi hazır ✅";
 
-    currentUser = await Pi.authenticate(scopes);
+    autoLogin();
+
+  } catch(e) {
+
+    document.getElementById("status").innerHTML =
+      "Pi SDK hatası ❌";
+
+    console.log(e);
+  }
+}
+
+async function autoLogin() {
+
+  try {
+
+    const auth = await Pi.authenticate(
+      ["username","payments"],
+      function(payment){ return payment; }
+    );
+
+    currentUser = auth;
 
     document.getElementById("status").innerHTML =
       "Giriş başarılı ✅";
 
-    console.log(currentUser);
-
-  } catch (err) {
-
-    console.log(err);
+  } catch(e) {
 
     document.getElementById("status").innerHTML =
       "Giriş başarısız ❌";
+
+    console.log(e);
   }
 }
 
-async function sendPayment() {
+document.getElementById("loginBtn").onclick = autoLogin;
 
-  if (!currentUser) {
+document.getElementById("payBtn").onclick = function(){
+
+  if(!currentUser){
     alert("Önce giriş yap");
     return;
   }
@@ -72,39 +94,37 @@ async function sendPayment() {
   Pi.createPayment(
     {
       amount: 0.01,
-      memo: "Pi Test Payment",
+      memo: "Pi Test",
       metadata: {
+        app: "MapOfPiStays",
         test: true
       }
     },
     {
-      onReadyForServerApproval: function(paymentId) {
-        console.log("Approval:", paymentId);
+      onReadyForServerApproval: function(paymentId){
+        console.log(paymentId);
       },
 
-      onReadyForServerCompletion: function(paymentId) {
+      onReadyForServerCompletion: function(paymentId){
         document.getElementById("status").innerHTML =
           "Ödeme tamamlandı ✅";
       },
 
-      onCancel: function() {
+      onCancel: function(){
         document.getElementById("status").innerHTML =
-          "İşlem iptal edildi";
+          "Ödeme iptal edildi";
       },
 
-      onError: function(error) {
-        console.log(error);
+      onError: function(error){
         document.getElementById("status").innerHTML =
           "Ödeme hatası ❌";
+        console.log(error);
       }
     }
   );
-}
+};
 
-document.getElementById("loginBtn").addEventListener("click", loginPi);
-document.getElementById("payBtn").addEventListener("click", sendPayment);
-
-window.onload = loginPi;
+window.onload = initPi;
 
 </script>
 
