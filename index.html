@@ -1,71 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<title>Pi Test</title>
 </head>
 
-<body style="text-align:center; margin-top:100px;">
+<body style="font-family:Arial;text-align:center;margin-top:80px;">
 
-<h2>Pi Test</h2>
+<h2>Pi Test App</h2>
 
-<button id="loginBtn">Giriş Yap</button>
-<br><br>
+<p id="status">Başlatılıyor...</p>
+
 <button id="payBtn">0.01 Pi Gönder</button>
 
-<p id="t">Yükleniyor...</p>
-
 <script>
-let user = null;
 
-// Pi başlat
-window.onload = async function () {
-  try {
-    await Pi.init({ version: "2.0", sandbox: true });
-    document.getElementById("t").innerText = "Hazır 👍";
-  } catch (e) {
-    document.getElementById("t").innerText = "Pi yüklenemedi ❌";
-  }
-};
+let currentUser = null;
 
-// Giriş
-document.getElementById("loginBtn").onclick = async function () {
-  document.getElementById("t").innerText = "Giriş yapılıyor...";
+async function startPi() {
 
   try {
-    user = await Pi.authenticate(['payments']);
-    document.getElementById("t").innerText = "Giriş başarılı ✅";
-  } catch (e) {
-    document.getElementById("t").innerText = "Hata ❌";
-  }
-};
 
-// Ödeme
-document.getElementById("payBtn").onclick = function () {
-  if (!user) {
-    document.getElementById("t").innerText = "Önce giriş yap";
+    Pi.init({
+      version: "2.0",
+      sandbox: true
+    });
+
+    document.getElementById("status").innerText =
+      "Pi hazır. Giriş bekleniyor...";
+
+    currentUser = await Pi.authenticate(
+      ["payments"],
+      function(payment) {},
+      function(paymentId) {}
+    );
+
+    document.getElementById("status").innerText =
+      "Giriş başarılı ✅";
+
+  } catch(err) {
+
+    console.log(err);
+
+    document.getElementById("status").innerText =
+      "Giriş başarısız ❌";
+  }
+}
+
+window.onload = startPi;
+
+document.getElementById("payBtn").onclick = function() {
+
+  if(!currentUser){
+    document.getElementById("status").innerText =
+      "Önce giriş yapılmalı";
     return;
   }
 
-  document.getElementById("t").innerText = "Ödeme başlatılıyor...";
+  Pi.createPayment(
 
-  Pi.createPayment({
-    amount: 0.01,
-    memo: "Test",
-    metadata: {}
-  }, {
-    onReadyForServerApproval: function () {},
-    onReadyForServerCompletion: function () {
-      document.getElementById("t").innerText = "Tamamlandı ✅";
+    {
+      amount: 0.01,
+      memo: "Pi Test Payment",
+      metadata: {
+        type: "test"
+      }
     },
-    onCancel: function () {
-      document.getElementById("t").innerText = "İptal";
-    },
-    onError: function () {
-      document.getElementById("t").innerText = "Hata ❌";
+
+    {
+      onReadyForServerApproval: function(paymentId) {
+        console.log("Approval:", paymentId);
+      },
+
+      onReadyForServerCompletion: function(paymentId) {
+        console.log("Completion:", paymentId);
+
+        document.getElementById("status").innerText =
+          "Ödeme tamamlandı ✅";
+      },
+
+      onCancel: function(paymentId) {
+
+        document.getElementById("status").innerText =
+          "Ödeme iptal edildi";
+      },
+
+      onError: function(error) {
+
+        console.log(error);
+
+        document.getElementById("status").innerText =
+          "Ödeme hatası ❌";
+      }
     }
-  });
+  );
 };
+
 </script>
 
 </body>
