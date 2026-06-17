@@ -9,113 +9,102 @@
 
 <style>
 body{
-font-family:Arial;
+font-family:Arial,sans-serif;
 text-align:center;
-padding-top:100px;
+padding-top:80px;
 }
 button{
-padding:12px 20px;
-font-size:18px;
+padding:15px 30px;
+font-size:20px;
+margin:10px;
 }
 </style>
-
 </head>
+
 <body>
 
 <h1>Pi Test App</h1>
 
 <p id="status">Yükleniyor...</p>
 
-<button onclick="loginPi()">Pi Giriş Yap</button>
-
-<br><br>
-
-<button onclick="sendPayment()">0.01 Pi Gönder</button>
+<button id="loginBtn">Pi Giriş Yap</button>
+<br>
+<button id="payBtn">0.01 Pi Gönder</button>
 
 <script>
 
 let currentUser = null;
 
-async function loginPi(){
+async function loginPi() {
 
-const status=document.getElementById("status");
+  try {
 
-try{
+    Pi.init({
+      version: "2.0",
+      sandbox: true
+    });
 
-if(typeof Pi==="undefined"){
-status.innerHTML="Pi SDK bulunamadı ❌";
-return;
+    const scopes = ["username", "payments"];
+
+    currentUser = await Pi.authenticate(scopes);
+
+    document.getElementById("status").innerHTML =
+      "Giriş başarılı ✅";
+
+    console.log(currentUser);
+
+  } catch (err) {
+
+    console.log(err);
+
+    document.getElementById("status").innerHTML =
+      "Giriş başarısız ❌";
+  }
 }
 
-await Pi.init({
-version:"2.0",
-sandbox:true
-});
+async function sendPayment() {
 
-status.innerHTML="Giriş ekranı bekleniyor...";
+  if (!currentUser) {
+    alert("Önce giriş yap");
+    return;
+  }
 
-currentUser=await Pi.authenticate(
-["payments"],
-function(){},
-function(){}
-);
+  Pi.createPayment(
+    {
+      amount: 0.01,
+      memo: "Pi Test Payment",
+      metadata: {
+        test: true
+      }
+    },
+    {
+      onReadyForServerApproval: function(paymentId) {
+        console.log("Approval:", paymentId);
+      },
 
-status.innerHTML=
-"Giriş başarılı ✅<br><b>"+currentUser.username+"</b>";
+      onReadyForServerCompletion: function(paymentId) {
+        document.getElementById("status").innerHTML =
+          "Ödeme tamamlandı ✅";
+      },
 
-}catch(error){
+      onCancel: function() {
+        document.getElementById("status").innerHTML =
+          "İşlem iptal edildi";
+      },
 
-console.log(error);
-
-status.innerHTML=
-"HATA ❌<br>"+JSON.stringify(error);
-
+      onError: function(error) {
+        console.log(error);
+        document.getElementById("status").innerHTML =
+          "Ödeme hatası ❌";
+      }
+    }
+  );
 }
 
-}
+document.getElementById("loginBtn").addEventListener("click", loginPi);
+document.getElementById("payBtn").addEventListener("click", sendPayment);
 
-async function sendPayment(){
-
-if(!currentUser){
-alert("Önce Pi giriş yap");
-return;
-}
-
-Pi.createPayment(
-{
-amount:0.01,
-memo:"Pi Test Payment",
-metadata:{}
-},
-{
-onReadyForServerApproval:function(paymentId){
-console.log(paymentId);
-},
-
-onReadyForServerCompletion:function(paymentId){
-document.getElementById("status").innerHTML=
-"Ödeme tamamlandı ✅";
-},
-
-onCancel:function(){
-document.getElementById("status").innerHTML=
-"Ödeme iptal edildi";
-},
-
-onError:function(error){
-console.log(error);
-document.getElementById("status").innerHTML=
-"Ödeme hatası ❌";
-}
-}
-);
-
-}
-
-window.onload=function(){
-document.getElementById("status").innerHTML=
-"Pi Giriş Yap butonuna bas";
-};
+window.onload = loginPi;
 
 </script>
 
