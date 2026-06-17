@@ -1,88 +1,57 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Map of Pi Stays</title>
-
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-<style>
-body{
-font-family:Arial,sans-serif;
-text-align:center;
-padding-top:100px;
-}
-
-button{
-padding:15px 30px;
-font-size:22px;
-margin:10px;
-}
-</style>
 </head>
-
-<body>
+<body style="font-family:Arial;text-align:center;padding-top:100px;">
 
 <h1>Map of Pi Stays</h1>
-
 <p id="status">Başlatılıyor...</p>
-
 <button id="loginBtn">Pi Giriş Yap</button>
 
 <script>
-
 let currentUser = null;
 
 async function initPi() {
-
   try {
-
     await Pi.init({
       version: "2.0",
       sandbox: false
     });
 
-    document.getElementById("status").innerHTML =
-      "Pi hazır ✅";
-
-  } catch(e) {
-
-    document.getElementById("status").innerHTML =
-      "Pi SDK hatası ❌";
-
+    document.getElementById("status").innerText = "Pi hazır ✅";
+  } catch (e) {
+    document.getElementById("status").innerText = "Pi SDK hatası ❌";
     console.log(e);
   }
 }
 
 async function loginPi() {
-
   try {
-
-    const auth = await Pi.authenticate(
-      ["username"],
-      function(){ return true; }
+    currentUser = await Pi.authenticate(
+      ["username", "payments"],
+      function(payment) {
+        return payment;
+      }
     );
 
-    currentUser = auth;
+    document.getElementById("status").innerText =
+      "Giriş başarılı ✅";
 
-    document.getElementById("status").innerHTML =
-      "Giriş başarılı ✅<br><br>Kullanıcı: " +
-      auth.username;
+    console.log(currentUser);
 
-  } catch(e) {
-
-    document.getElementById("status").innerHTML =
+  } catch (e) {
+    document.getElementById("status").innerText =
       "Giriş başarısız ❌";
-
     console.log(e);
   }
 }
 
 document.getElementById("loginBtn").onclick = loginPi;
-
 window.onload = initPi;
-
 </script>
 
 </body>
