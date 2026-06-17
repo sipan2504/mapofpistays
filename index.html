@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pi Test App</title>
+<title>Map of Pi Stays</title>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
@@ -16,7 +16,7 @@ padding-top:100px;
 
 button{
 padding:15px 30px;
-font-size:24px;
+font-size:22px;
 margin:10px;
 }
 </style>
@@ -24,13 +24,11 @@ margin:10px;
 
 <body>
 
-<h1>Pi Test App</h1>
+<h1>Map of Pi Stays</h1>
 
 <p id="status">Başlatılıyor...</p>
 
 <button id="loginBtn">Pi Giriş Yap</button>
-<br>
-<button id="payBtn">0.01 Pi Gönder</button>
 
 <script>
 
@@ -48,8 +46,6 @@ async function initPi() {
     document.getElementById("status").innerHTML =
       "Pi hazır ✅";
 
-    autoLogin();
-
   } catch(e) {
 
     document.getElementById("status").innerHTML =
@@ -59,19 +55,20 @@ async function initPi() {
   }
 }
 
-async function autoLogin() {
+async function loginPi() {
 
   try {
 
     const auth = await Pi.authenticate(
-      ["username","payments"],
-      function(payment){ return payment; }
+      ["username"],
+      function(){ return true; }
     );
 
     currentUser = auth;
 
     document.getElementById("status").innerHTML =
-      "Giriş başarılı ✅";
+      "Giriş başarılı ✅<br><br>Kullanıcı: " +
+      auth.username;
 
   } catch(e) {
 
@@ -82,47 +79,7 @@ async function autoLogin() {
   }
 }
 
-document.getElementById("loginBtn").onclick = autoLogin;
-
-document.getElementById("payBtn").onclick = function(){
-
-  if(!currentUser){
-    alert("Önce giriş yap");
-    return;
-  }
-
-  Pi.createPayment(
-    {
-      amount: 0.01,
-      memo: "Pi Test",
-      metadata: {
-        app: "MapOfPiStays",
-        test: true
-      }
-    },
-    {
-      onReadyForServerApproval: function(paymentId){
-        console.log(paymentId);
-      },
-
-      onReadyForServerCompletion: function(paymentId){
-        document.getElementById("status").innerHTML =
-          "Ödeme tamamlandı ✅";
-      },
-
-      onCancel: function(){
-        document.getElementById("status").innerHTML =
-          "Ödeme iptal edildi";
-      },
-
-      onError: function(error){
-        document.getElementById("status").innerHTML =
-          "Ödeme hatası ❌";
-        console.log(error);
-      }
-    }
-  );
-};
+document.getElementById("loginBtn").onclick = loginPi;
 
 window.onload = initPi;
 
