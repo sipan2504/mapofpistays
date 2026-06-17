@@ -1,19 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Map of Pi Stays</title>
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-</head>
-<body style="font-family:Arial;text-align:center;padding-top:100px;">
 
-<h1>Map of Pi Stays</h1>
-<p id="status">Başlatılıyor...</p>
-<button id="loginBtn">Pi Giriş Yap</button>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+}
+
+header{
+  background:#6f3ff5;
+  color:white;
+  padding:15px;
+  text-align:center;
+}
+
+#status{
+  text-align:center;
+  padding:10px;
+}
+
+#loginBtn{
+  display:block;
+  margin:10px auto;
+  padding:12px 20px;
+  font-size:18px;
+}
+
+#map{
+  width:100%;
+  height:70vh;
+}
+
+.bottom-menu{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  border-top:1px solid #ddd;
+  padding:12px 0;
+  font-size:24px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  🌍 Map of Pi Stays
+</header>
+
+<div id="status">
+  Başlatılıyor...
+</div>
+
+<button id="loginBtn">
+  Pi Giriş Yap
+</button>
+
+<div id="map"></div>
+
+<div class="bottom-menu">
+  <div>🏠</div>
+  <div>➕</div>
+  <div>❤️</div>
+  <div>👤</div>
+</div>
 
 <script>
 let currentUser = null;
+let map = null;
 
 async function initPi() {
   try {
@@ -22,9 +92,12 @@ async function initPi() {
       sandbox: false
     });
 
-    document.getElementById("status").innerText = "Pi hazır ✅";
+    document.getElementById("status").innerHTML =
+      "Pi hazır ✅";
+
   } catch (e) {
-    document.getElementById("status").innerText = "Pi SDK hatası ❌";
+    document.getElementById("status").innerHTML =
+      "Pi SDK hatası ❌";
     console.log(e);
   }
 }
@@ -32,26 +105,91 @@ async function initPi() {
 async function loginPi() {
   try {
     currentUser = await Pi.authenticate(
-      ["username", "payments"],
-      function(payment) {
-        return payment;
-      }
+      ["username"],
+      function(){ return true; }
     );
 
-    document.getElementById("status").innerText =
+    document.getElementById("status").innerHTML =
       "Giriş başarılı ✅";
 
-    console.log(currentUser);
-
   } catch (e) {
-    document.getElementById("status").innerText =
+    document.getElementById("status").innerHTML =
       "Giriş başarısız ❌";
     console.log(e);
   }
 }
 
-document.getElementById("loginBtn").onclick = loginPi;
-window.onload = initPi;
+document
+  .getElementById("loginBtn")
+  .onclick = loginPi;
+
+function initMap() {
+
+  map = L.map("map").setView([41, 29], 3);
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution:
+        "&copy; OpenStreetMap"
+    }
+  ).addTo(map);
+
+  // İstanbul
+  L.marker([41.0082,28.9784])
+    .addTo(map)
+    .bindPopup(
+      "🏠 Dilek's Home<br>📍 İstanbul, Türkiye"
+    );
+
+  // Kapadokya
+  L.marker([38.6431,34.8270])
+    .addTo(map)
+    .bindPopup(
+      "🏠 Cave Stay<br>📍 Kapadokya, Türkiye"
+    );
+
+  // Paris
+  L.marker([48.8566,2.3522])
+    .addTo(map)
+    .bindPopup(
+      "🏠 Paris Apartment<br>📍 Paris, Fransa"
+    );
+
+  // Roma
+  L.marker([41.9028,12.4964])
+    .addTo(map)
+    .bindPopup(
+      "🏠 Roma House<br>📍 Roma, İtalya"
+    );
+
+  // Kullanıcının konumu
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(position){
+
+        const lat =
+          position.coords.latitude;
+
+        const lng =
+          position.coords.longitude;
+
+        L.marker([lat,lng])
+          .addTo(map)
+          .bindPopup(
+            "📍 Konumunuz"
+          );
+
+        map.setView([lat,lng],7);
+      }
+    );
+  }
+}
+
+window.onload = function() {
+  initPi();
+  initMap();
+};
 </script>
 
 </body>
