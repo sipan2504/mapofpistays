@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pi Test App</title>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-<title>Pi Test</title>
 </head>
 
-<body style="font-family:Arial;text-align:center;margin-top:80px;">
+<body style="font-family:Arial;text-align:center;padding-top:100px;">
 
-<h2>Pi Test App</h2>
+<h1>Pi Test App</h1>
 
-<p id="status">Başlatılıyor...</p>
+<p id="status">Bağlanılıyor...</p>
 
-<button id="payBtn">0.01 Pi Gönder</button>
+<button onclick="sendPayment()">0.01 Pi Gönder</button>
 
 <script>
 
@@ -26,79 +25,63 @@ async function startPi() {
   try {
 
     Pi.init({
-      version: "2.0",
       sandbox: true
     });
 
-    document.getElementById("status").innerText =
-      "Pi hazır. Giriş bekleniyor...";
+    currentUser = await Pi.authenticate(["payments"]);
 
-    currentUser = await Pi.authenticate(
-      ["payments"],
-      function(payment) {},
-      function(paymentId) {}
-    );
-
-    document.getElementById("status").innerText =
+    document.getElementById("status").innerHTML =
       "Giriş başarılı ✅";
 
-  } catch(err) {
+  } catch (error) {
 
-    console.log(err);
+    console.log(error);
 
-    document.getElementById("status").innerText =
+    document.getElementById("status").innerHTML =
       "Giriş başarısız ❌";
   }
 }
 
-window.onload = startPi;
+async function sendPayment() {
 
-document.getElementById("payBtn").onclick = function() {
-
-  if(!currentUser){
-    document.getElementById("status").innerText =
-      "Önce giriş yapılmalı";
+  if (!currentUser) {
+    alert("Önce giriş yap");
     return;
   }
 
   Pi.createPayment(
-
     {
       amount: 0.01,
       memo: "Pi Test Payment",
       metadata: {
-        type: "test"
+        test: true
       }
     },
-
     {
       onReadyForServerApproval: function(paymentId) {
-        console.log("Approval:", paymentId);
+        console.log(paymentId);
       },
 
       onReadyForServerCompletion: function(paymentId) {
-        console.log("Completion:", paymentId);
-
-        document.getElementById("status").innerText =
+        document.getElementById("status").innerHTML =
           "Ödeme tamamlandı ✅";
       },
 
-      onCancel: function(paymentId) {
-
-        document.getElementById("status").innerText =
-          "Ödeme iptal edildi";
+      onCancel: function() {
+        document.getElementById("status").innerHTML =
+          "İptal edildi";
       },
 
       onError: function(error) {
-
         console.log(error);
-
-        document.getElementById("status").innerText =
+        document.getElementById("status").innerHTML =
           "Ödeme hatası ❌";
       }
     }
   );
-};
+}
+
+window.addEventListener("load", startPi);
 
 </script>
 
