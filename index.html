@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!DOCTYPE html><html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Map of Pi Stays</title>
-
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-<link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<style>
+<title>Map of Pi Stays</title><script src="https://sdk.minepi.com/pi-sdk.js"></script><link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
 body{
   margin:0;
   font-family:Arial,sans-serif;
@@ -47,7 +38,7 @@ header{
 #addStay{
   display:none;
   padding:20px;
-  padding-bottom:100px;
+  padding-bottom:220px;
 }
 
 input,
@@ -67,6 +58,7 @@ button.saveBtn{
   width:100%;
   padding:15px;
   font-size:18px;
+  margin-bottom:20px;
 }
 
 .bottom-menu{
@@ -81,30 +73,13 @@ button.saveBtn{
   padding:15px 0;
   font-size:28px;
 }
-</style>
-</head>
-
-<body>
-
-<header>
+</style></head><body><header>
 🌍 Map of Pi Stays
-</header>
-
-<div id="status">
+</header><div id="status">
 Başlatılıyor...
-</div>
-
-<button id="loginBtn">
+</div><button id="loginBtn">
 Pi Giriş Yap
-</button>
-
-<div id="map"></div>
-
-<div id="addStay">
-
-<h2>➕ Yeni Konaklama</h2>
-
-<input id="stayName" type="text"
+</button><div id="map"></div><div id="addStay"><h2>➕ Yeni Konaklama</h2><input id="stayName" type="text"
 placeholder="🏠 Konaklama Adı">
 
 <input id="stayCountry" type="text"
@@ -114,32 +89,29 @@ placeholder="🌍 Ülke">
 placeholder="🏙️ Şehir">
 
 <textarea id="stayDesc"
-placeholder="📝 Açıklama"></textarea>
+placeholder="📝 Açıklama"></textarea><button class="saveBtn"
+onclick="useMyLocation()">
+📍 Konumumu Kullan
+</button>
 
-<input id="stayLat" type="number"
-placeholder="📍 Enlem">
-
-<input id="stayLng" type="number"
-placeholder="📍 Boylam">
-
-<button class="saveBtn"
+<p id="locationText">
+Henüz konum seçilmedi
+</p><button class="saveBtn"
 onclick="saveStay()">
 Kaydet
 </button>
 
-</div>
-
-<div class="bottom-menu">
+</div><div class="bottom-menu">
 <div onclick="showHome()">🏠</div>
 <div onclick="showAddStay()">➕</div>
 <div>❤️</div>
 <div>👤</div>
-</div>
-
-<script>
+</div><script>
 
 let currentUser = null;
 let map = null;
+let selectedLat = null;
+let selectedLng = null;
 
 async function initPi(){
   try{
@@ -158,7 +130,6 @@ async function initPi(){
 }
 
 async function loginPi(){
-
   try{
 
     currentUser =
@@ -168,13 +139,14 @@ async function loginPi(){
       );
 
     document.getElementById("status")
-      .innerHTML = "Giriş başarılı ✅";
+      .innerHTML =
+      "Giriş başarılı ✅";
 
   }catch(e){
 
     document.getElementById("status")
-      .innerHTML = "Giriş başarısız ❌";
-
+      .innerHTML =
+      "Giriş başarısız ❌";
   }
 }
 
@@ -200,22 +172,6 @@ function initMap(){
     "Dilek's Home",
     "İstanbul",
     "Türkiye"
-  );
-
-  addPin(
-    38.6431,
-    34.8270,
-    "Cave Stay",
-    "Kapadokya",
-    "Türkiye"
-  );
-
-  addPin(
-    48.8566,
-    2.3522,
-    "Paris Apartment",
-    "Paris",
-    "Fransa"
   );
 
   let stays =
@@ -249,9 +205,19 @@ function initMap(){
           const lng =
             pos.coords.longitude;
 
-          L.marker([lat,lng])
-            .addTo(map)
-            .bindPopup("📍 Konumunuz");
+          L.circleMarker(
+            [lat,lng],
+            {
+              radius:8,
+              color:"blue",
+              fillColor:"blue",
+              fillOpacity:1
+            }
+          )
+          .addTo(map)
+          .bindPopup(
+            "📍 Konumunuz"
+          );
 
         }
       );
@@ -282,10 +248,12 @@ function addPin(
 function showAddStay(){
 
   document.getElementById("map")
-    .style.display = "none";
+    .style.display =
+    "none";
 
   document.getElementById("addStay")
-    .style.display = "block";
+    .style.display =
+    "block";
 
   window.scrollTo(0,0);
 }
@@ -293,10 +261,51 @@ function showAddStay(){
 function showHome(){
 
   document.getElementById("map")
-    .style.display = "block";
+    .style.display =
+    "block";
 
   document.getElementById("addStay")
-    .style.display = "none";
+    .style.display =
+    "none";
+}
+
+function useMyLocation(){
+
+  if(!navigator.geolocation){
+    alert(
+      "Konum desteklenmiyor."
+    );
+    return;
+  }
+
+  navigator.geolocation
+    .getCurrentPosition(
+      function(pos){
+
+        selectedLat =
+          pos.coords.latitude;
+
+        selectedLng =
+          pos.coords.longitude;
+
+        document.getElementById(
+          "locationText"
+        ).innerHTML =
+          "📍 Konum alındı ✅";
+
+        alert(
+          "Konumunuz alındı ✅"
+        );
+
+      },
+      function(){
+
+        alert(
+          "Konum alınamadı."
+        );
+
+      }
+    );
 }
 
 function saveStay(){
@@ -322,28 +331,17 @@ function saveStay(){
         "stayDesc"
       ).value,
 
-    lat:
-      parseFloat(
-        document.getElementById(
-          "stayLat"
-        ).value
-      ),
-
-    lng:
-      parseFloat(
-        document.getElementById(
-          "stayLng"
-        ).value
-      )
+    lat: selectedLat,
+    lng: selectedLng
   };
 
   if(
     !stay.name ||
-    isNaN(stay.lat) ||
-    isNaN(stay.lng)
+    stay.lat === null ||
+    stay.lng === null
   ){
     alert(
-      "Lütfen bilgileri doldurun."
+      "Önce 📍 Konumumu Kullan butonuna basın."
     );
     return;
   }
@@ -383,8 +381,5 @@ window.onload = function(){
   initMap();
 
 };
-
-</script>
-
-</body>
-</html>  
+</script></body>
+</html>
