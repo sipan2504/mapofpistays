@@ -7,10 +7,8 @@
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -25,6 +23,7 @@ header{
   color:white;
   padding:15px;
   text-align:center;
+  font-size:22px;
 }
 
 #status{
@@ -41,7 +40,25 @@ header{
 
 #map{
   width:100%;
-  height:70vh;
+  height:65vh;
+}
+
+#addStay{
+  display:none;
+  padding:20px;
+}
+
+input, textarea{
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+  box-sizing:border-box;
+}
+
+.saveBtn{
+  width:100%;
+  padding:14px;
+  font-size:18px;
 }
 
 .bottom-menu{
@@ -53,7 +70,7 @@ header{
   justify-content:space-around;
   border-top:1px solid #ddd;
   padding:12px 0;
-  font-size:24px;
+  font-size:26px;
 }
 </style>
 </head>
@@ -61,27 +78,57 @@ header{
 <body>
 
 <header>
-  🌍 Map of Pi Stays
+🌍 Map of Pi Stays
 </header>
 
 <div id="status">
-  Başlatılıyor...
+Başlatılıyor...
 </div>
 
 <button id="loginBtn">
-  Pi Giriş Yap
+Pi Giriş Yap
 </button>
 
 <div id="map"></div>
 
+<div id="addStay">
+
+<h2>➕ Yeni Konaklama</h2>
+
+<input id="stayName"
+placeholder="Konaklama Adı">
+
+<input id="stayCountry"
+placeholder="Ülke">
+
+<input id="stayCity"
+placeholder="Şehir">
+
+<textarea id="stayDesc"
+placeholder="Açıklama"></textarea>
+
+<input id="stayLat"
+placeholder="Enlem (Latitude)">
+
+<input id="stayLng"
+placeholder="Boylam (Longitude)">
+
+<button class="saveBtn"
+onclick="saveStay()">
+Kaydet
+</button>
+
+</div>
+
 <div class="bottom-menu">
-  <div>🏠</div>
-  <div>➕</div>
-  <div>❤️</div>
-  <div>👤</div>
+<div onclick="showHome()">🏠</div>
+<div onclick="showAddStay()">➕</div>
+<div>❤️</div>
+<div>👤</div>
 </div>
 
 <script>
+
 let currentUser = null;
 let map = null;
 
@@ -96,101 +143,258 @@ async function initPi() {
       "Pi hazır ✅";
 
   } catch (e) {
+
     document.getElementById("status").innerHTML =
       "Pi SDK hatası ❌";
+
     console.log(e);
   }
 }
 
 async function loginPi() {
+
   try {
-    currentUser = await Pi.authenticate(
-      ["username"],
-      function(){ return true; }
-    );
+
+    currentUser =
+      await Pi.authenticate(
+        ["username"],
+        function(){
+          return true;
+        }
+      );
 
     document.getElementById("status").innerHTML =
       "Giriş başarılı ✅";
 
   } catch (e) {
+
     document.getElementById("status").innerHTML =
       "Giriş başarısız ❌";
+
     console.log(e);
   }
 }
 
-document
-  .getElementById("loginBtn")
-  .onclick = loginPi;
+document.getElementById("loginBtn")
+.onclick = loginPi;
 
 function initMap() {
 
-  map = L.map("map").setView([41, 29], 3);
+  map = L.map("map")
+    .setView([41,29],3);
 
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution:
-        "&copy; OpenStreetMap"
+      "&copy; OpenStreetMap"
     }
   ).addTo(map);
 
-  // İstanbul
-  L.marker([41.0082,28.9784])
-    .addTo(map)
-    .bindPopup(
-      "🏠 Dilek's Home<br>📍 İstanbul, Türkiye"
+  addPin(
+    41.0082,
+    28.9784,
+    "Dilek's Home",
+    "İstanbul",
+    "Türkiye"
+  );
+
+  addPin(
+    38.6431,
+    34.8270,
+    "Cave Stay",
+    "Kapadokya",
+    "Türkiye"
+  );
+
+  addPin(
+    48.8566,
+    2.3522,
+    "Paris Apartment",
+    "Paris",
+    "Fransa"
+  );
+
+  addPin(
+    41.9028,
+    12.4964,
+    "Roma House",
+    "Roma",
+    "İtalya"
+  );
+
+  let stays =
+    JSON.parse(
+      localStorage.getItem("stays")
+      || "[]"
     );
 
-  // Kapadokya
-  L.marker([38.6431,34.8270])
-    .addTo(map)
-    .bindPopup(
-      "🏠 Cave Stay<br>📍 Kapadokya, Türkiye"
+  stays.forEach(function(stay){
+
+    addPin(
+      stay.lat,
+      stay.lng,
+      stay.name,
+      stay.city,
+      stay.country,
+      stay.desc
     );
 
-  // Paris
-  L.marker([48.8566,2.3522])
-    .addTo(map)
-    .bindPopup(
-      "🏠 Paris Apartment<br>📍 Paris, Fransa"
-    );
+  });
 
-  // Roma
-  L.marker([41.9028,12.4964])
-    .addTo(map)
-    .bindPopup(
-      "🏠 Roma House<br>📍 Roma, İtalya"
-    );
+  if(navigator.geolocation){
 
-  // Kullanıcının konumu
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function(position){
+    navigator.geolocation
+      .getCurrentPosition(
+        function(pos){
 
-        const lat =
-          position.coords.latitude;
+          const lat =
+            pos.coords.latitude;
 
-        const lng =
-          position.coords.longitude;
+          const lng =
+            pos.coords.longitude;
 
-        L.marker([lat,lng])
-          .addTo(map)
-          .bindPopup(
-            "📍 Konumunuz"
-          );
+          L.marker([lat,lng])
+            .addTo(map)
+            .bindPopup(
+              "📍 Konumunuz"
+            );
 
-        map.setView([lat,lng],7);
-      }
-    );
+        }
+      );
+
   }
+
 }
 
-window.onload = function() {
+function addPin(
+  lat,
+  lng,
+  name,
+  city,
+  country,
+  desc=""
+){
+
+  L.marker([lat,lng])
+    .addTo(map)
+    .bindPopup(
+      "🏠 " + name +
+      "<br>📍 " +
+      city +
+      ", " +
+      country +
+      "<br>📝 " +
+      desc
+    );
+
+}
+
+function showAddStay(){
+
+  document
+    .getElementById("map")
+    .style.display =
+    "none";
+
+  document
+    .getElementById("addStay")
+    .style.display =
+    "block";
+
+}
+
+function showHome(){
+
+  document
+    .getElementById("map")
+    .style.display =
+    "block";
+
+  document
+    .getElementById("addStay")
+    .style.display =
+    "none";
+
+}
+
+function saveStay(){
+
+  const stay = {
+    name:
+      document.getElementById(
+        "stayName"
+      ).value,
+
+    country:
+      document.getElementById(
+        "stayCountry"
+      ).value,
+
+    city:
+      document.getElementById(
+        "stayCity"
+      ).value,
+
+    desc:
+      document.getElementById(
+        "stayDesc"
+      ).value,
+
+    lat:
+      parseFloat(
+        document.getElementById(
+          "stayLat"
+        ).value
+      ),
+
+    lng:
+      parseFloat(
+        document.getElementById(
+          "stayLng"
+        ).value
+      )
+  };
+
+  let stays =
+    JSON.parse(
+      localStorage.getItem("stays")
+      || "[]"
+    );
+
+  stays.push(stay);
+
+  localStorage.setItem(
+    "stays",
+    JSON.stringify(stays)
+  );
+
+  addPin(
+    stay.lat,
+    stay.lng,
+    stay.name,
+    stay.city,
+    stay.country,
+    stay.desc
+  );
+
+  alert(
+    "Konaklama kaydedildi ✅"
+  );
+
+  showHome();
+
+}
+
+window.onload =
+function(){
+
   initPi();
   initMap();
+
 };
+
 </script>
 
 </body>
-</html>
+</html>      
