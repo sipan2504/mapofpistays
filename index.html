@@ -79,7 +79,11 @@ button.saveBtn{
 Başlatılıyor...
 </div><button id="loginBtn">
 Pi Giriş Yap
-</button><div id="map"></div><div id="addStay"><h2>➕ Yeni Konaklama</h2><input id="stayName" type="text"
+</button>
+  <button id="payBtn" style="display:none;margin:10px auto;padding:12px 20px;font-size:18px;background:#6f3ff5;color:#fff;border:none;border-radius:10px;">
+💰 Pay with Pi (0.01 Pi)
+  </button>
+  <div id="map"></div><div id="addStay"><h2>➕ Yeni Konaklama</h2><input id="stayName" type="text"
 placeholder="🏠 Konaklama Adı">
 
 <input id="stayCountry" type="text"
@@ -141,6 +145,7 @@ async function loginPi(){
     document.getElementById("status")
       .innerHTML =
       "Giriş başarılı ✅";
+    document.getElementById("payBtn").style.display = "block";
 
   }catch(e){
 
