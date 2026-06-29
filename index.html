@@ -157,6 +157,46 @@ async function loginPi(){
 
 document.getElementById("loginBtn")
 .onclick = loginPi;
+  document.getElementById("payBtn").onclick = async function () {
+
+  try {
+
+    await Pi.createPayment(
+      {
+        amount: 0.01,
+        memo: "Map of Pi Stays Test Payment",
+        metadata: {}
+      },
+      {
+        onReadyForServerApproval: function (paymentId) {
+          fetch("/api/approve", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId })
+          });
+        },
+        onReadyForServerCompletion: function (paymentId, txid) {
+          fetch("/api/complete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId, txid })
+          });
+        },
+        onCancel: function () {
+          alert("Ödeme iptal edildi.");
+        },
+        onError: function (error) {
+          console.log(error);
+          alert("Ödeme hatası.");
+        }
+      }
+    );
+
+  } catch (e) {
+    console.log(e);
+  }
+
+};
 
 function initMap(){
 
