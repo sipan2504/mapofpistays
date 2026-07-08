@@ -1,213 +1,428 @@
-<!DOCTYPE html><html lang="tr">
+<!DOCTYPE html>
+<html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Map of Pi Stays</title><script src="https://sdk.minepi.com/pi-sdk.js"></script><link rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Map of Pi Stays</title>
+
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+font-family:Arial,sans-serif;
+
+}
+
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f5f5;
+
+background:#f5f5f5;
+
 }
 
 header{
-  background:#6f3ff5;
-  color:#fff;
-  text-align:center;
-  padding:15px;
-  font-size:24px;
+
+background:#6f3ff5;
+
+color:white;
+
+padding:18px;
+
+text-align:center;
+
+font-size:24px;
+
+font-weight:bold;
+
 }
 
 #status{
-  text-align:center;
-  padding:10px;
+
+padding:10px;
+
+text-align:center;
+
+font-size:18px;
+
+}
+
+button{
+
+cursor:pointer;
+
 }
 
 #loginBtn{
-  display:block;
-  margin:10px auto;
-  padding:12px 20px;
-  font-size:18px;
+
+display:block;
+
+margin:10px auto;
+
+padding:14px 22px;
+
+font-size:18px;
+
+background:#6f3ff5;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+}
+
+#payBtn{
+
+display:none;
+
+margin:10px auto;
+
+padding:14px 22px;
+
+font-size:18px;
+
+background:#00a651;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
 }
 
 #map{
-  width:100%;
-  height:60vh;
+
+width:100%;
+
+height:60vh;
+
 }
 
 #addStay{
-  display:none;
-  padding:20px;
-  padding-bottom:220px;
+
+display:none;
+
+padding:20px;
+
+padding-bottom:220px;
+
 }
 
 input,
+
 textarea{
-  width:100%;
-  box-sizing:border-box;
-  padding:12px;
-  margin:10px 0;
-  font-size:16px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  background:#fff;
-  color:#000;
+
+width:100%;
+
+padding:12px;
+
+margin:10px 0;
+
+font-size:16px;
+
+border-radius:10px;
+
+border:1px solid #ccc;
+
 }
 
-button.saveBtn{
-  width:100%;
-  padding:15px;
-  font-size:18px;
-  margin-bottom:20px;
+.saveBtn{
+
+width:100%;
+
+padding:15px;
+
+font-size:18px;
+
+background:#6f3ff5;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+margin-top:10px;
+
 }
 
 .bottom-menu{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  background:#fff;
-  border-top:1px solid #ddd;
-  display:flex;
-  justify-content:space-around;
-  padding:15px 0;
-  font-size:28px;
+
+position:fixed;
+
+bottom:0;
+
+left:0;
+
+width:100%;
+
+background:white;
+
+border-top:1px solid #ddd;
+
+display:flex;
+
+justify-content:space-around;
+
+padding:16px;
+
+font-size:30px;
+
 }
-</style></head><body><header>
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
 🌍 Map of Pi Stays
-</header><div id="status">
-Başlatılıyor...
-</div><button id="loginBtn">
+
+</header>
+
+<div id="status">
+
+Pi hazırlanıyor...
+
+</div>
+
+<button id="loginBtn">
+
 Pi Giriş Yap
+
 </button>
-  <button id="payBtn" style="display:none;margin:10px auto;padding:12px 20px;font-size:18px;background:#6f3ff5;color:#fff;border:none;border-radius:10px;">
+
+<button id="payBtn">
+
 💰 Pay with Pi (0.01 Pi)
-  </button>
-  <div id="map"></div><div id="addStay"><h2>➕ Yeni Konaklama</h2><input id="stayName" type="text"
+
+</button>
+
+<div id="map"></div>
+
+<div id="addStay">
+  <h2>➕ Yeni Konaklama</h2>
+
+<input
+id="stayName"
+type="text"
 placeholder="🏠 Konaklama Adı">
 
-<input id="stayCountry" type="text"
+<input
+id="stayCountry"
+type="text"
 placeholder="🌍 Ülke">
 
-<input id="stayCity" type="text"
+<input
+id="stayCity"
+type="text"
 placeholder="🏙️ Şehir">
 
-<textarea id="stayDesc"
-placeholder="📝 Açıklama"></textarea><button class="saveBtn"
+<textarea
+id="stayDesc"
+placeholder="📝 Açıklama"></textarea>
+
+<button
+class="saveBtn"
 onclick="useMyLocation()">
+
 📍 Konumumu Kullan
+
 </button>
 
 <p id="locationText">
+
 Henüz konum seçilmedi
-</p><button class="saveBtn"
+
+</p>
+
+<button
+class="saveBtn"
 onclick="saveStay()">
+
 Kaydet
+
 </button>
 
-</div><div class="bottom-menu">
-<div onclick="showHome()">🏠</div>
-<div onclick="showAddStay()">➕</div>
-<div>❤️</div>
-<div>👤</div>
-</div><script>
+</div>
+
+<div class="bottom-menu">
+
+<div onclick="showHome()">
+
+🏠
+
+</div>
+
+<div onclick="showAddStay()">
+
+➕
+
+</div>
+
+<div>
+
+❤️
+
+</div>
+
+<div>
+
+👤
+
+</div>
+
+</div>
+
+<script>
 
 let currentUser = null;
+
 let map = null;
+
 let selectedLat = null;
+
 let selectedLng = null;
 
 async function initPi(){
-  try{
-    await Pi.init({
-      version:"2.0",
-      sandbox:false
-    });
 
-    document.getElementById("status")
-      .innerHTML = "Pi hazır ✅";
+try{
 
-  }catch(e){
-    document.getElementById("status")
-      .innerHTML = "Pi SDK hatası ❌";
-  }
+await Pi.init({
+
+version:"2.0",
+
+sandbox:false
+
+});
+
+document.getElementById("status").innerHTML="Pi hazır ✅";
+
+}catch(e){
+
+document.getElementById("status").innerHTML="Pi SDK Hatası";
+
+}
+
 }
 
 async function loginPi(){
-  try{
 
-    currentUser =
-      await Pi.authenticate(
-        ["username"],
-        function(){ return true; }
-      );
+try{
 
-    document.getElementById("status")
-      .innerHTML =
-      "Giriş başarılı ✅";
-    document.getElementById("payBtn").style.display = "block";
+currentUser = await Pi.authenticate(["username"]);
 
-  }catch(e){
+document.getElementById("status").innerHTML =
+"Hoş geldin " + currentUser.username;
 
-    document.getElementById("status")
-      .innerHTML =
-      "Giriş başarısız ❌";
-  }
+document.getElementById("payBtn").style.display="block";
+
+}catch(e){
+
+alert("Pi giriş başarısız.");
+
 }
 
-document.getElementById("loginBtn")
-.onclick = loginPi;
+}
+
+document.getElementById("loginBtn").onclick=loginPi;
   document.getElementById("payBtn").onclick = async function () {
 
   try {
 
     await Pi.createPayment(
+
       {
         amount: 0.01,
         memo: "Map of Pi Stays Test Payment",
-        metadata: {}
-      },
-      {
-        onReadyForServerApproval: function (paymentId) {
-          fetch("/api/approve", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId })
-          });
-        },
-        onReadyForServerCompletion: function (paymentId, txid) {
-          fetch("/api/complete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ paymentId, txid })
-          });
-        },
-        onCancel: function () {
-          alert("Ödeme iptal edildi.");
-        },
-        onError: function (error) {
-          console.log(error);
-          alert("Ödeme hatası.");
+        metadata: {
+          app: "Map of Pi Stays"
         }
+      },
+
+      {
+
+        onReadyForServerApproval: async function(paymentId){
+
+          await fetch("/api/approve",{
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+              paymentId
+            })
+          });
+
+        },
+
+        onReadyForServerCompletion: async function(paymentId,txid){
+
+          await fetch("/api/complete",{
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+              paymentId,
+              txid
+            })
+          });
+
+        },
+
+        onCancel:function(){
+
+          alert("Ödeme iptal edildi.");
+
+        },
+
+        onError:function(error){
+
+          console.log(error);
+
+          alert("Ödeme hatası oluştu.");
+
+        }
+
       }
+
     );
 
-  } catch (e) {
-    console.log(e);
-  }
+  }catch(err){
 
-};
+    console.log(err);
 
-function initMap(){
+    alert("Pi ödeme başlatılamadı.");
+    function initMap(){
 
-  map = L.map("map")
-    .setView([41,29],3);
+  map = L.map("map").setView([41.0082,28.9784],5);
 
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-      attribution:
-      "&copy; OpenStreetMap"
+      attribution:"© OpenStreetMap"
     }
   ).addTo(map);
 
@@ -216,14 +431,13 @@ function initMap(){
     28.9784,
     "Dilek's Home",
     "İstanbul",
-    "Türkiye"
+    "Türkiye",
+    "İlk örnek konaklama"
   );
 
-  let stays =
-    JSON.parse(
-      localStorage.getItem("stays")
-      || "[]"
-    );
+  let stays = JSON.parse(
+    localStorage.getItem("stays") || "[]"
+  );
 
   stays.forEach(function(stay){
 
@@ -240,33 +454,32 @@ function initMap(){
 
   if(navigator.geolocation){
 
-    navigator.geolocation
-      .getCurrentPosition(
-        function(pos){
+    navigator.geolocation.getCurrentPosition(
 
-          const lat =
-            pos.coords.latitude;
+      function(pos){
 
-          const lng =
-            pos.coords.longitude;
+        L.circleMarker(
+          [
+            pos.coords.latitude,
+            pos.coords.longitude
+          ],
+          {
+            radius:8,
+            color:"blue",
+            fillColor:"blue",
+            fillOpacity:1
+          }
 
-          L.circleMarker(
-            [lat,lng],
-            {
-              radius:8,
-              color:"blue",
-              fillColor:"blue",
-              fillOpacity:1
-            }
-          )
-          .addTo(map)
-          .bindPopup(
-            "📍 Konumunuz"
-          );
+        ).addTo(map)
 
-        }
-      );
+        .bindPopup("📍 Konumunuz");
+
+      }
+
+    );
+
   }
+
 }
 
 function addPin(
@@ -279,154 +492,150 @@ function addPin(
 ){
 
   L.marker([lat,lng])
-    .addTo(map)
-    .bindPopup(
-      "🏠 " + name +
-      "<br>📍 " +
-      city + ", " +
-      country +
-      "<br>📝 " +
-      desc
-    );
-}
 
-function showAddStay(){
+  .addTo(map)
 
-  document.getElementById("map")
-    .style.display =
-    "none";
+  .bindPopup(
 
-  document.getElementById("addStay")
-    .style.display =
-    "block";
+    "<b>"+name+"</b><br>"+
+
+    city+", "+country+
+
+    "<br>"+desc
+
+  );
+
+      }
+    function showAddStay(){
+
+  document.getElementById("map").style.display="none";
+
+  document.getElementById("addStay").style.display="block";
 
   window.scrollTo(0,0);
+
 }
 
 function showHome(){
 
-  document.getElementById("map")
-    .style.display =
-    "block";
+  document.getElementById("map").style.display="block";
 
-  document.getElementById("addStay")
-    .style.display =
-    "none";
+  document.getElementById("addStay").style.display="none";
+
 }
 
 function useMyLocation(){
 
   if(!navigator.geolocation){
-    alert(
-      "Konum desteklenmiyor."
-    );
+
+    alert("Konum desteklenmiyor.");
+
     return;
+
   }
 
-  navigator.geolocation
-    .getCurrentPosition(
-      function(pos){
+  navigator.geolocation.getCurrentPosition(
 
-        selectedLat =
-          pos.coords.latitude;
+    function(pos){
 
-        selectedLng =
-          pos.coords.longitude;
+      selectedLat = pos.coords.latitude;
 
-        document.getElementById(
-          "locationText"
-        ).innerHTML =
-          "📍 Konum alındı ✅";
+      selectedLng = pos.coords.longitude;
 
-        alert(
-          "Konumunuz alındı ✅"
-        );
+      document.getElementById("locationText").innerHTML =
+      "📍 Konum alındı ✅";
 
-      },
-      function(){
+      alert("Konum başarıyla alındı.");
 
-        alert(
-          "Konum alınamadı."
-        );
+    },
 
-      }
-    );
+    function(){
+
+      alert("Konum alınamadı.");
+
+    }
+
+  );
+
 }
 
 function saveStay(){
 
   const stay = {
-    name:
-      document.getElementById(
-        "stayName"
-      ).value,
 
-    country:
-      document.getElementById(
-        "stayCountry"
-      ).value,
+    name:document.getElementById("stayName").value,
 
-    city:
-      document.getElementById(
-        "stayCity"
-      ).value,
+    country:document.getElementById("stayCountry").value,
 
-    desc:
-      document.getElementById(
-        "stayDesc"
-      ).value,
+    city:document.getElementById("stayCity").value,
 
-    lat: selectedLat,
-    lng: selectedLng
+    desc:document.getElementById("stayDesc").value,
+
+    lat:selectedLat,
+
+    lng:selectedLng
+
   };
 
   if(
+
     !stay.name ||
-    stay.lat === null ||
-    stay.lng === null
+
+    stay.lat==null ||
+
+    stay.lng==null
+
   ){
-    alert(
-      "Önce 📍 Konumumu Kullan butonuna basın."
-    );
+
+    alert("Önce konum seç.");
+
     return;
+
   }
 
-  let stays =
-    JSON.parse(
-      localStorage.getItem("stays")
-      || "[]"
-    );
+  let stays = JSON.parse(
+
+    localStorage.getItem("stays") || "[]"
+
+  );
 
   stays.push(stay);
 
   localStorage.setItem(
+
     "stays",
+
     JSON.stringify(stays)
+
   );
 
   addPin(
+
     stay.lat,
+
     stay.lng,
+
     stay.name,
+
     stay.city,
+
     stay.country,
+
     stay.desc
+
   );
-    
-alert(
-  "Konaklama kaydedildi ✅"
-);
 
-showHome();
+  alert("Konaklama kaydedildi ✅");
+
+  showHome();
 }
-
-window.onload = function(){
+  window.onload = function(){
 
   initPi();
+
   initMap();
 
 };
-</script>
+  </script>
 </body>
 </html>
-  
