@@ -330,8 +330,7 @@ document.getElementById("status").innerHTML="Pi SDK Hatası";
 async function loginPi(){
 
 try{
-
-currentUser = await Pi.authenticate(["username"]);
+currentUser = await Pi.authenticate(["username"], function(){});
 
 document.getElementById("status").innerHTML =
 "Hoş geldin " + currentUser.username;
