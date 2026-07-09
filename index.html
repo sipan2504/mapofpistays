@@ -333,8 +333,7 @@ try{
 currentUser = await Pi.authenticate(["username"], function(){});
 
 document.getElementById("status").innerHTML =
-"Hoş geldin " + currentUser.username;
-
+"Hoş geldin " + (currentUser.user?.username || currentUser.username);
 document.getElementById("payBtn").style.display="block";
 
 }catch(e){
